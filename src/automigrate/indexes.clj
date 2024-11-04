@@ -18,17 +18,17 @@
 
 (s/def ::index
   (s/keys
-    :req-un [::type
-             ::fields]
-    :opt-un [::unique
-             ::where]))
+   :req-un [::type
+            ::fields]
+   :opt-un [::unique
+            ::where]))
 
 
 (s/def ::index-vec-options
   (s/keys
-    :req-un [::fields]
-    :opt-un [::unique
-             ::where]))
+   :req-un [::fields]
+   :opt-un [::unique
+            ::where]))
 
 
 (s/def ::index-vec-options-strict-keys
@@ -40,11 +40,11 @@
 
 (s/def ::index-vec
   (s/cat
-    :name ::index-name
-    :type ::type
-    :options (s/and
-               ::index-vec-options
-               ::index-vec-options-strict-keys)))
+   :name ::index-name
+   :type ::type
+   :options (s/and
+             ::index-vec-options
+             ::index-vec-options-strict-keys)))
 
 
 (s/def ::indexes

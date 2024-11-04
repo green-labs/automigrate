@@ -15,7 +15,7 @@
          (if (string? file-ref)
            (-> file-ref io/resource file-util/read-edn)
            (file-util/read-edn file-ref)))
-    migrations-files))
+       migrations-files))
 
 
 (defmulti apply-action-to-schema
@@ -32,7 +32,7 @@
 (defmethod apply-action-to-schema actions/ADD-COLUMN-ACTION
   [schema action]
   (assoc-in schema [(:model-name action) :fields (:field-name action)]
-    (:options action)))
+            (:options action)))
 
 
 (defmethod apply-action-to-schema actions/ALTER-COLUMN-ACTION
@@ -43,13 +43,13 @@
         changes-to-drop (model-util/changes-to-drop (:changes action))
         dissoc-actions-fn (fn [schema]
                             (apply map-util/dissoc-in
-                              schema
-                              [model-name :fields field-name]
-                              changes-to-drop))]
+                                   schema
+                                   [model-name :fields field-name]
+                                   changes-to-drop))]
 
     (-> schema
-      (update-in [model-name :fields field-name] merge changes-to-add)
-      (dissoc-actions-fn))))
+        (update-in [model-name :fields field-name] merge changes-to-add)
+        (dissoc-actions-fn))))
 
 
 (defmethod apply-action-to-schema actions/DROP-COLUMN-ACTION
@@ -65,16 +65,16 @@
 (defmethod apply-action-to-schema actions/CREATE-INDEX-ACTION
   [schema action]
   (assoc-in schema [(:model-name action) :indexes (:index-name action)]
-    (:options action)))
+            (:options action)))
 
 
 (defmethod apply-action-to-schema actions/DROP-INDEX-ACTION
   [schema action]
   (let [action-name (:model-name action)
         result (map-util/dissoc-in
-                 schema
-                 [action-name :indexes]
-                 (:index-name action))]
+                schema
+                [action-name :indexes]
+                (:index-name action))]
     (if (seq (get-in result [action-name :indexes]))
       result
       (map-util/dissoc-in result [action-name] :indexes))))
@@ -83,28 +83,28 @@
 (defmethod apply-action-to-schema actions/ALTER-INDEX-ACTION
   [schema action]
   (assoc-in schema [(:model-name action) :indexes (:index-name action)]
-    (:options action)))
+            (:options action)))
 
 
 (defmethod apply-action-to-schema actions/CREATE-TYPE-ACTION
   [schema action]
   (assoc-in schema [(:model-name action) :types (:type-name action)]
-    (:options action)))
+            (:options action)))
 
 
 (defmethod apply-action-to-schema actions/ALTER-TYPE-ACTION
   [schema action]
   (assoc-in schema [(:model-name action) :types (:type-name action)]
-    (:options action)))
+            (:options action)))
 
 
 (defmethod apply-action-to-schema actions/DROP-TYPE-ACTION
   [schema action]
   (let [action-name (:model-name action)
         result (map-util/dissoc-in
-                 schema
-                 [action-name :types]
-                 (:type-name action))]
+                schema
+                [action-name :types]
+                (:type-name action))]
     (if (seq (get-in result [action-name :types]))
       result
       (map-util/dissoc-in result [action-name] :types))))
@@ -115,8 +115,8 @@
   ; Throws spec exception if not valid.
   (actions/validate-actions! actions)
   (->> actions
-    (reduce apply-action-to-schema {})
-    (spec-util/conform ::models/internal-models)))
+       (reduce apply-action-to-schema {})
+       (spec-util/conform ::models/internal-models)))
 
 
 (defn current-db-schema

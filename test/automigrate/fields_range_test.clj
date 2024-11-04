@@ -37,8 +37,8 @@
                        :with-columns
                        [(list :thing field-type)]}]
               :q-sql [[(format "CREATE TABLE account (thing %s)"
-                         (str/upper-case type-name))]]}
-            (test-util/perform-make-and-migrate!
+                               (str/upper-case type-name))]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions []
                :existing-models {:account
@@ -52,7 +52,7 @@
                :udt_name type-name
                :is_nullable "YES"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"))))))
 
@@ -87,15 +87,15 @@
                       {:add-column (list :thing :char)
                        :alter-table :account}
                       {:alter-table (list :account
-                                      {:alter-column
-                                       (list :thing :type field-type
-                                         :using [:raw "thing"] [:raw "::"]
-                                         field-type)})}]
+                                          {:alter-column
+                                           (list :thing :type field-type
+                                                 :using [:raw "thing"] [:raw "::"]
+                                                 field-type)})}]
               :q-sql [["CREATE TABLE account (id SERIAL)"]
                       [(format "ALTER TABLE account ADD COLUMN thing CHAR")]
                       [(format "ALTER TABLE account ALTER COLUMN thing TYPE %s USING thing :: %s"
-                         type-name-up type-name-up)]]}
-            (test-util/perform-make-and-migrate!
+                               type-name-up type-name-up)]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}}
@@ -123,7 +123,7 @@
                :udt_name type-name
                :is_nullable "YES"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"))))))
 
@@ -156,14 +156,14 @@
               :q-edn [{:create-table [:account]
                        :with-columns ['(:id :serial)]}
                       {:add-column (list :thing
-                                     (if (vector? field-type)
-                                       [:raw type-name-up]
-                                       field-type))
+                                         (if (vector? field-type)
+                                           [:raw type-name-up]
+                                           field-type))
                        :alter-table :account}]
               :q-sql [["CREATE TABLE account (id SERIAL)"]
                       [(format "ALTER TABLE account ADD COLUMN thing %s"
-                         type-name-up)]]}
-            (test-util/perform-make-and-migrate!
+                               type-name-up)]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}}
@@ -187,7 +187,7 @@
                :udt_name type-name
                :is_nullable "YES"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"))))))
 
@@ -217,15 +217,15 @@
               :q-edn [{:create-table [:account]
                        :with-columns ['(:id :serial)
                                       (list :thing
-                                        (if (vector? field-type)
-                                          [:raw type-name-up]
-                                          field-type))]}
+                                            (if (vector? field-type)
+                                              [:raw type-name-up]
+                                              field-type))]}
                       {:drop-column :thing
                        :alter-table :account}]
               :q-sql [[(format "CREATE TABLE account (id SERIAL, thing %s)"
-                         type-name-up)]
+                               type-name-up)]
                       ["ALTER TABLE account DROP COLUMN thing"]]}
-            (test-util/perform-make-and-migrate!
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}
@@ -242,6 +242,6 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"))))))

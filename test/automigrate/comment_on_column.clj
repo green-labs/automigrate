@@ -17,13 +17,13 @@
                                                 :comment "The name of a user"}}
                                 :model-name :users})
             :q-edn [(list
-                      {:create-table [:users]
-                       :with-columns ['(:id :serial)
-                                      '(:name :varchar)]}
-                      [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])]
+                     {:create-table [:users]
+                      :with-columns ['(:id :serial)
+                                     '(:name :varchar)]}
+                     [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])]
             :q-sql [[["CREATE TABLE users (id SERIAL, name VARCHAR)"]
                      ["COMMENT ON COLUMN users.name IS 'The name of a user'"]]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions []
              :existing-models {:users
@@ -45,13 +45,13 @@
                :udt_name "varchar"
                :is_nullable "YES"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users")))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users")))
 
       (testing "test comment"
         (is (= [{:column_name "name"
                  :description "The name of a user"
                  :table_name "users"}]
-              (test-util/get-column-comment config/DATABASE-CONN "users" "name")))))))
+               (test-util/get-column-comment config/DATABASE-CONN "users" "name")))))))
 
 
 (deftest test-action-drop-table-with-comment-on-column-ok
@@ -59,15 +59,15 @@
     (is (= {:new-actions (list {:action :drop-table
                                 :model-name :users})
             :q-edn [(list
-                      {:create-table [:users]
-                       :with-columns ['(:id :serial)
-                                      '(:name :varchar)]}
-                      [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])
+                     {:create-table [:users]
+                      :with-columns ['(:id :serial)
+                                     '(:name :varchar)]}
+                     [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])
                     {:drop-table [:if-exists :users]}]
             :q-sql [[["CREATE TABLE users (id SERIAL, name VARCHAR)"]
                      ["COMMENT ON COLUMN users.name IS 'The name of a user'"]]
                     ["DROP TABLE IF EXISTS users"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}
@@ -78,11 +78,11 @@
 
     (testing "check actual db changes"
       (is (= []
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test comment"
       (is (= []
-            (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
+             (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
 
 
 (deftest test-action-add-column-with-comment-on-column-ok
@@ -100,7 +100,7 @@
             :q-sql [["CREATE TABLE users (id SERIAL)"]
                     [["ALTER TABLE users ADD COLUMN name VARCHAR"]
                      ["COMMENT ON COLUMN users.name IS 'The name of a user'"]]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}}
@@ -124,13 +124,13 @@
                :udt_name "varchar"
                :is_nullable "YES"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test comment"
       (is (= [{:column_name "name"
                :description "The name of a user"
                :table_name "users"}]
-            (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
+             (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
 
 
 (deftest test-action-drop-column-with-comment-on-column-ok
@@ -149,7 +149,7 @@
                     [["ALTER TABLE users ADD COLUMN name VARCHAR"]
                      ["COMMENT ON COLUMN users.name IS 'The name of a user'"]]
                     ["ALTER TABLE users DROP COLUMN name"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}}
@@ -170,11 +170,11 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test comment"
       (is (= []
-            (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
+             (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
 
 
 (deftest test-action-alter-column-add-comment-on-column-ok
@@ -192,7 +192,7 @@
                     [[:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"]]]
             :q-sql [["CREATE TABLE users (id SERIAL, name VARCHAR)"]
                     [["COMMENT ON COLUMN users.name IS 'The name of a user'"]]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}
@@ -217,13 +217,13 @@
                :udt_name "varchar"
                :is_nullable "YES"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test comment"
       (is (= [{:column_name "name"
                :description "The name of a user"
                :table_name "users"}]
-            (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
+             (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
 
 
 (deftest test-action-alter-column-with-comment-on-column-ok
@@ -236,15 +236,15 @@
                                 :field-name :name
                                 :model-name :users})
             :q-edn [(list
-                      {:create-table [:users]
-                       :with-columns ['(:id :serial)
-                                      '(:name :varchar)]}
-                      [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])
+                     {:create-table [:users]
+                      :with-columns ['(:id :serial)
+                                     '(:name :varchar)]}
+                     [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])
                     [[:raw "COMMENT ON COLUMN users.name IS 'Updated comment'"]]]
             :q-sql [[["CREATE TABLE users (id SERIAL, name VARCHAR)"]
                      ["COMMENT ON COLUMN users.name IS 'The name of a user'"]]
                     [["COMMENT ON COLUMN users.name IS 'Updated comment'"]]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}
@@ -270,13 +270,13 @@
                :udt_name "varchar"
                :is_nullable "YES"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test comment"
       (is (= [{:column_name "name"
                :description "Updated comment"
                :table_name "users"}]
-            (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
+             (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
 
 
 (deftest test-action-alter-column-with-comment-and-another-option-ok
@@ -292,17 +292,17 @@
                                 :field-name :name
                                 :model-name :users})
             :q-edn [(list
-                      {:create-table [:users]
-                       :with-columns ['(:id :serial)
-                                      '(:name :varchar)]}
-                      [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])
+                     {:create-table [:users]
+                      :with-columns ['(:id :serial)
+                                     '(:name :varchar)]}
+                     [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])
                     [{:alter-table '(:users {:alter-column [:name :set [:not nil]]})}
                      [:raw "COMMENT ON COLUMN users.name IS 'Updated comment'"]]]
             :q-sql [[["CREATE TABLE users (id SERIAL, name VARCHAR)"]
                      ["COMMENT ON COLUMN users.name IS 'The name of a user'"]]
                     [["ALTER TABLE users ALTER COLUMN name SET NOT NULL"]
                      ["COMMENT ON COLUMN users.name IS 'Updated comment'"]]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}
@@ -329,13 +329,13 @@
                :udt_name "varchar"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test comment"
       (is (= [{:column_name "name"
                :description "Updated comment"
                :table_name "users"}]
-            (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
+             (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
 
 
 (deftest test-action-alter-column-drop-comment-on-column-ok
@@ -347,15 +347,15 @@
                                 :field-name :name
                                 :model-name :users})
             :q-edn [(list
-                      {:create-table [:users]
-                       :with-columns ['(:id :serial)
-                                      '(:name :varchar)]}
-                      [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])
+                     {:create-table [:users]
+                      :with-columns ['(:id :serial)
+                                     '(:name :varchar)]}
+                     [:raw "COMMENT ON COLUMN users.name IS 'The name of a user'"])
                     [[:raw "COMMENT ON COLUMN users.name IS NULL"]]]
             :q-sql [[["CREATE TABLE users (id SERIAL, name VARCHAR)"]
                      ["COMMENT ON COLUMN users.name IS 'The name of a user'"]]
                     [["COMMENT ON COLUMN users.name IS NULL"]]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}
@@ -381,37 +381,37 @@
                :udt_name "varchar"
                :is_nullable "YES"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test comment"
       (is (= []
-            (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
+             (test-util/get-column-comment config/DATABASE-CONN "users" "name"))))))
 
 
 (deftest test-commment-on-column-errors
   (testing "comment can't be integer"
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Option :comment of field :account/thing should be string.\n\n"
-             "  {:comment 1}\n\n")
-          (with-out-str
-            (test-util/make-migration!
+                "Option :comment of field :account/thing should be string.\n\n"
+                "  {:comment 1}\n\n")
+           (with-out-str
+             (test-util/make-migration!
               {:existing-models
                {:account {:fields [[:thing :interval {:comment 1}]]}}})))))
 
   (testing "comment can't be nil"
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Option :comment of field :account/thing should be string.\n\n"
-             "  {:comment nil}\n\n")
-          (with-out-str
-            (test-util/make-migration!
+                "Option :comment of field :account/thing should be string.\n\n"
+                "  {:comment nil}\n\n")
+           (with-out-str
+             (test-util/make-migration!
               {:existing-models
                {:account {:fields [[:thing :interval {:comment nil}]]}}})))))
 
   (testing "comment can't be an empty string"
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Option :comment of field :account/thing should be string.\n\n"
-             "  {:comment \"\"}\n\n")
-          (with-out-str
-            (test-util/make-migration!
+                "Option :comment of field :account/thing should be string.\n\n"
+                "  {:comment \"\"}\n\n")
+           (with-out-str
+             (test-util/make-migration!
               {:existing-models
                {:account {:fields [[:thing :interval {:comment ""}]]}}}))))))

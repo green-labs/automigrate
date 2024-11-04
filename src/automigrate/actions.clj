@@ -57,16 +57,16 @@
 (defmethod action CREATE-TABLE-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::model-name
-             ::fields/fields]))
+   :req-un [::action
+            ::model-name
+            ::fields/fields]))
 
 
 (defmethod action DROP-TABLE-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::model-name]))
+   :req-un [::action
+            ::model-name]))
 
 
 (s/def ::options
@@ -76,45 +76,45 @@
 (defmethod action ADD-COLUMN-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::field-name
-             ::model-name
-             ::options]))
+   :req-un [::action
+            ::field-name
+            ::model-name
+            ::options]))
 
 
 (s/def ::changes
   (s/and
-    (s/map-of keyword? map? :min-count 1)
-    (d/dict*
-      (d/->opt (model-util/generate-type-option ::fields/type))
-      (d/->opt (model-util/generate-changes [::fields/unique
-                                             ::fields/null
-                                             ::fields/primary-key
-                                             ::fields/default
-                                             ::fields/foreign-key
-                                             ::fields/on-delete
-                                             ::fields/on-update
-                                             ::fields/check
-                                             ::fields/array
-                                             ::fields/comment])))))
+   (s/map-of keyword? map? :min-count 1)
+   (d/dict*
+    (d/->opt (model-util/generate-type-option ::fields/type))
+    (d/->opt (model-util/generate-changes [::fields/unique
+                                           ::fields/null
+                                           ::fields/primary-key
+                                           ::fields/default
+                                           ::fields/foreign-key
+                                           ::fields/on-delete
+                                           ::fields/on-update
+                                           ::fields/check
+                                           ::fields/array
+                                           ::fields/comment])))))
 
 
 (defmethod action ALTER-COLUMN-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::field-name
-             ::model-name
-             ::options
-             ::changes]))
+   :req-un [::action
+            ::field-name
+            ::model-name
+            ::options
+            ::changes]))
 
 
 (defmethod action DROP-COLUMN-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::field-name
-             ::model-name]))
+   :req-un [::action
+            ::field-name
+            ::model-name]))
 
 
 (s/def :automigrate.actions.indexes/options
@@ -124,27 +124,27 @@
 (defmethod action CREATE-INDEX-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::index-name
-             ::model-name
-             :automigrate.actions.indexes/options]))
+   :req-un [::action
+            ::index-name
+            ::model-name
+            :automigrate.actions.indexes/options]))
 
 
 (defmethod action DROP-INDEX-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::index-name
-             ::model-name]))
+   :req-un [::action
+            ::index-name
+            ::model-name]))
 
 
 (defmethod action ALTER-INDEX-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::index-name
-             ::model-name
-             :automigrate.actions.indexes/options]))
+   :req-un [::action
+            ::index-name
+            ::model-name
+            :automigrate.actions.indexes/options]))
 
 
 (s/def :automigrate.actions.types/options
@@ -154,25 +154,25 @@
 (defmethod action CREATE-TYPE-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::type-name
-             ::model-name
-             :automigrate.actions.types/options]))
+   :req-un [::action
+            ::type-name
+            ::model-name
+            :automigrate.actions.types/options]))
 
 
 (defmethod action DROP-TYPE-ACTION
   [_]
   (s/keys
-    :req-un [::action
-             ::type-name
-             ::model-name]))
+   :req-un [::action
+            ::type-name
+            ::model-name]))
 
 
 (s/def :automigrate.actions.types/changes
   (s/and
-    (s/map-of keyword? map? :min-count 1)
-    (d/dict*
-      (d/->opt (model-util/generate-changes [::types/choices])))))
+   (s/map-of keyword? map? :min-count 1)
+   (d/dict*
+    (d/->opt (model-util/generate-changes [::types/choices])))))
 
 
 (s/def ::validate-type-choices-not-allow-to-remove
@@ -187,21 +187,21 @@
     (let [choices-from (-> action-data :changes :choices :from)
           choices-from-set (set choices-from)
           choices-to (->> (get-in action-data [:changes :choices :to])
-                       (filterv #(contains? choices-from-set %)))]
+                          (filterv #(contains? choices-from-set %)))]
       (= choices-from choices-to))))
 
 
 (defmethod action ALTER-TYPE-ACTION
   [_]
   (s/and
-    (s/keys
-      :req-un [::action
-               ::type-name
-               ::model-name
-               :automigrate.actions.types/options
-               :automigrate.actions.types/changes])
-    ::validate-type-choices-not-allow-to-remove
-    ::validate-type-choices-not-allow-to-re-order))
+   (s/keys
+    :req-un [::action
+             ::type-name
+             ::model-name
+             :automigrate.actions.types/options
+             :automigrate.actions.types/changes])
+   ::validate-type-choices-not-allow-to-remove
+   ::validate-type-choices-not-allow-to-re-order))
 
 
 ; Public

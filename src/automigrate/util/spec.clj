@@ -14,10 +14,10 @@
   (if (s/valid? spec value)
     true
     (let [ed (merge (assoc (s/explain-data* spec [] [] [] value)
-                      ::s/failure :assertion-failed))]
+                           ::s/failure :assertion-failed))]
       (throw (ex-info
-               (str "Spec assertion failed\n" (with-out-str (s/explain-out ed)))
-               ed)))))
+              (str "Spec assertion failed\n" (with-out-str (s/explain-out ed)))
+              ed)))))
 
 
 (defn- throw-exception-for-spec!
@@ -64,11 +64,11 @@
 (defn- get-map-spec-keys
   [spec]
   (->> spec
-    (s/form)
-    (filter vector?)
-    (apply concat)
-    (map (comp keyword name))
-    (set)))
+       (s/form)
+       (filter vector?)
+       (apply concat)
+       (map (comp keyword name))
+       (set)))
 
 
 (defn validate-strict-keys

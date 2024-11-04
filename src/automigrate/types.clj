@@ -13,7 +13,7 @@
 
 (s/def ::type-vec-options
   (s/keys
-    :req-un [::choices]))
+   :req-un [::choices]))
 
 
 (s/def ::type-vec-options-strict-keys
@@ -26,17 +26,17 @@
 
 (s/def ::type-vec
   (s/cat
-    :name ::name
-    :type :automigrate.types.define-as/type
-    :options (s/and
-               ::type-vec-options
-               ::type-vec-options-strict-keys)))
+   :name ::name
+   :type :automigrate.types.define-as/type
+   :options (s/and
+             ::type-vec-options
+             ::type-vec-options-strict-keys)))
 
 
 (s/def ::type
   (s/keys
-    :req-un [:automigrate.types.define-as/type
-             ::choices]))
+   :req-un [:automigrate.types.define-as/type
+            ::choices]))
 
 
 (s/def ::types

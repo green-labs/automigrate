@@ -19,8 +19,8 @@
               :field-name :name
               :model-name :feed
               :options {:type [:varchar 100] :null true}})
-          (test-util/make-migration-spy! {:existing-actions existing-actions
-                                          :existing-models existing-models})))))
+           (test-util/make-migration-spy! {:existing-actions existing-actions
+                                           :existing-models existing-models})))))
 
 
 (deftest test-make-migration*-add-column-decimal-ok
@@ -46,8 +46,8 @@
               :field-name :balance
               :model-name :feed
               :options {:type [:decimal 10] :default 47.23}})
-          (test-util/make-migration-spy! {:existing-actions existing-actions
-                                          :existing-models existing-models})))))
+           (test-util/make-migration-spy! {:existing-actions existing-actions
+                                           :existing-models existing-models})))))
 
 
 (deftest test-make-migration*-add-column-restore-ok
@@ -67,9 +67,9 @@
                           [:name [:varchar 100] {:null true}]
                           [:created_at :timestamp {:default [:now]}]]}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-add-column-restore-decimal-ok
@@ -82,9 +82,9 @@
                          [[:id :serial {:null false}]
                           [:amount [:decimal 10 2] {:null false}]]}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-alter-column-decimal-ok
@@ -103,8 +103,8 @@
               :model-name :feed
               :options {:null false
                         :type [:decimal 10]}})
-          (test-util/make-migration-spy! {:existing-actions existing-actions
-                                          :existing-models existing-models})))))
+           (test-util/make-migration-spy! {:existing-actions existing-actions
+                                           :existing-models existing-models})))))
 
 
 (deftest test-make-migration*-alter-column-restore-ok
@@ -136,9 +136,9 @@
                                    [:name :text]
                                    [:created_at :date]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-drop-column-restore-ok
@@ -163,9 +163,9 @@
                          {:fields [[:id :serial {:null false}]
                                    [:name [:varchar 100] {:null true}]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-drop-table-restore-ok
@@ -184,9 +184,9 @@
                          [[:id :serial {:null false}]
                           [:name [:varchar 255]]]}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-foreign-key-restore-ok
@@ -208,9 +208,9 @@
                          {:fields [[:id :serial {:unique true}]
                                    [:name [:varchar 255]]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-create-index-restore-ok
@@ -231,9 +231,9 @@
                           :indexes [[:feed_name_id_unique_idx :btree {:fields [:name :id]
                                                                       :unique true}]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-drop-index-restore-ok
@@ -255,9 +255,9 @@
                          {:fields [[:id :serial {:null false}]
                                    [:name :text]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-alter-index-restore-ok
@@ -282,9 +282,9 @@
                                    [:name :text]]
                           :indexes [[:feed_name_id_idx :btree {:fields [:name :id]}]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-create-table-with-fk-on-delete-restore-ok
@@ -308,9 +308,9 @@
                          :account [[:id :serial {:unique true
                                                  :primary-key true}]]}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-alter-column-with-fk-on-delete-restore-ok
@@ -341,6 +341,6 @@
                          :account [[:id :serial {:unique true
                                                  :primary-key true}]]}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))

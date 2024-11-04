@@ -11,26 +11,26 @@
 (defn primary-key-constraint-name
   [model-name]
   (->> [(name model-name) PRIMARY-KEY-CONSTRAINT-POSTFIX]
-    (str/join #"-")
-    (keyword)))
+       (str/join #"-")
+       (keyword)))
 
 
 (defn unique-constraint-name
   [model-name field-name]
   (->> [(name model-name) (name field-name) UNIQUE-CONSTRAINT-POSTFIX]
-    (str/join #"-")
-    (keyword)))
+       (str/join #"-")
+       (keyword)))
 
 
 (defn foreign-key-constraint-name
   [model-name field-name]
   (->> [(name model-name) (name field-name) FOREIGN-KEY-CONSTRAINT-POSTFIX]
-    (str/join #"-")
-    (keyword)))
+       (str/join #"-")
+       (keyword)))
 
 
 (defn check-constraint-name
   [model-name field-name]
   (->> [(name model-name) (name field-name) CHECK-CONSTRAINT-POSTFIX]
-    (str/join #"-")
-    (keyword)))
+       (str/join #"-")
+       (keyword)))

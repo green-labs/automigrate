@@ -20,7 +20,7 @@
             :q-edn [{:create-table [:users]
                      :with-columns ['(:id :serial [:constraint :users-pkey] :primary-key)]}]
             :q-sql [["CREATE TABLE users (id SERIAL CONSTRAINT users_pkey PRIMARY KEY)"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions []
              :existing-models {:users
@@ -34,14 +34,14 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test constraints in db"
       (is (= [{:colname "id"
                :constraint_name "users_pkey"
                :constraint_type "PRIMARY KEY"
                :table_name "users"}]
-            (test-util/get-constraints "users"))))))
+             (test-util/get-constraints "users"))))))
 
 
 (deftest test-alter-primary-key-constraint-added-on-column
@@ -58,7 +58,7 @@
                     {:alter-table '(:users {:add-constraint [:users-pkey [:primary-key :id]]})}]
             :q-sql [["CREATE TABLE users (id SERIAL)"]
                     ["ALTER TABLE users ADD CONSTRAINT users_pkey PRIMARY KEY(id)"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}}
@@ -74,14 +74,14 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test constraints in db"
       (is (= [{:colname "id"
                :constraint_name "users_pkey"
                :constraint_type "PRIMARY KEY"
                :table_name "users"}]
-            (test-util/get-constraints "users"))))))
+             (test-util/get-constraints "users"))))))
 
 
 (deftest test-drop-primary-key-constraint
@@ -97,7 +97,7 @@
                     {:alter-table '(:users {:drop-constraint :users-pkey})}]
             :q-sql [["CREATE TABLE users (id SERIAL CONSTRAINT users_pkey PRIMARY KEY)"]
                     ["ALTER TABLE users DROP CONSTRAINT users_pkey"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial
@@ -114,11 +114,11 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test constraints in db"
       (is (= []
-            (test-util/get-constraints "users"))))))
+             (test-util/get-constraints "users"))))))
 
 
 ; UNIQUE
@@ -132,7 +132,7 @@
             :q-edn [{:create-table [:users]
                      :with-columns ['(:id :serial [:constraint :users-id-key] :unique)]}]
             :q-sql [["CREATE TABLE users (id SERIAL CONSTRAINT users_id_key UNIQUE)"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions []
              :existing-models {:users
@@ -146,14 +146,14 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test constraints in db"
       (is (= [{:colname "id"
                :constraint_name "users_id_key"
                :constraint_type "UNIQUE"
                :table_name "users"}]
-            (test-util/get-constraints "users"))))))
+             (test-util/get-constraints "users"))))))
 
 
 (deftest test-alter-unique-constraint
@@ -171,7 +171,7 @@
                                             [:users-id-key [:unique nil :id]]})}]
             :q-sql [["CREATE TABLE users (id SERIAL)"]
                     ["ALTER TABLE users ADD CONSTRAINT users_id_key UNIQUE(id)"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}}
@@ -187,14 +187,14 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test constraints in db"
       (is (= [{:colname "id"
                :constraint_name "users_id_key"
                :constraint_type "UNIQUE"
                :table_name "users"}]
-            (test-util/get-constraints "users"))))))
+             (test-util/get-constraints "users"))))))
 
 
 (deftest test-drop-unique-constraint
@@ -210,7 +210,7 @@
                     {:alter-table '(:users {:drop-constraint :users-id-key})}]
             :q-sql [["CREATE TABLE users (id SERIAL CONSTRAINT users_id_key UNIQUE)"]
                     ["ALTER TABLE users DROP CONSTRAINT users_id_key"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial
@@ -227,11 +227,11 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
     (testing "test constraints in db"
       (is (= []
-            (test-util/get-constraints "users"))))))
+             (test-util/get-constraints "users"))))))
 
 
 ; FOREIGN KEY
@@ -239,30 +239,30 @@
 (deftest test-create-table-with-foreign-key-constraint
   (testing "check generated actions, queries edn and sql from all actions"
     (is (= {:new-actions (list
-                           {:action :create-table
-                            :fields {:id {:type :serial
-                                          :primary-key true}}
-                            :model-name :users}
-                           {:action :create-table
-                            :fields {:id {:primary-key true
-                                          :type :serial}
-                                     :user-id {:foreign-key :users/id
-                                               :on-delete :cascade
-                                               :type :integer}}
-                            :model-name :post})
+                          {:action :create-table
+                           :fields {:id {:type :serial
+                                         :primary-key true}}
+                           :model-name :users}
+                          {:action :create-table
+                           :fields {:id {:primary-key true
+                                         :type :serial}
+                                    :user-id {:foreign-key :users/id
+                                              :on-delete :cascade
+                                              :type :integer}}
+                           :model-name :post})
             :q-edn [{:create-table [:users]
                      :with-columns ['(:id :serial [:constraint :users-pkey] :primary-key)]}
                     {:create-table [:post]
                      :with-columns ['(:id :serial [:constraint :post-pkey] :primary-key)
                                     '(:user-id :integer
-                                       [:constraint :post-user-id-fkey]
-                                       (:references :users :id)
-                                       [:raw "on delete"]
-                                       [:raw "cascade"])]}]
+                                               [:constraint :post-user-id-fkey]
+                                               (:references :users :id)
+                                               [:raw "on delete"]
+                                               [:raw "cascade"])]}]
             :q-sql [["CREATE TABLE users (id SERIAL CONSTRAINT users_pkey PRIMARY KEY)"]
                     [(str "CREATE TABLE post (id SERIAL CONSTRAINT post_pkey PRIMARY KEY,"
-                       " user_id INTEGER CONSTRAINT post_user_id_fkey REFERENCES users(id) on delete cascade)")]]}
-          (test-util/perform-make-and-migrate!
+                          " user_id INTEGER CONSTRAINT post_user_id_fkey REFERENCES users(id) on delete cascade)")]]}
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions []
              :existing-models {:users
@@ -280,7 +280,7 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users")))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users")))
       (is (= [{:character_maximum_length nil
                :column_default "nextval('post_id_seq'::regclass)"
                :column_name "id"
@@ -295,7 +295,7 @@
                :udt_name "int4"
                :is_nullable "YES"
                :table_name "post"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
 
     (testing "test constraints in db"
       (is (= [{:conname "post_user_id_fkey"
@@ -303,37 +303,37 @@
                :pg_get_constraintdef
                "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
                :table_name "post"}]
-            (test-util/get-constraints-simple config/DATABASE-CONN
-              {:model-name-str "post"
-               :contype test-util/CONTYPE-FK}))))))
+             (test-util/get-constraints-simple config/DATABASE-CONN
+                                               {:model-name-str "post"
+                                                :contype test-util/CONTYPE-FK}))))))
 
 
 (deftest test-drop-foreign-key-constraint
   (testing "check generated actions, queries edn and sql from all actions"
     (is (= {:new-actions (list
-                           {:action :alter-column
-                            :options {:type :integer}
-                            :changes {:foreign-key {:from :users/id
-                                                    :to :EMPTY}
-                                      :on-delete {:from :cascade
-                                                  :to :EMPTY}}
-                            :field-name :user-id
-                            :model-name :post})
+                          {:action :alter-column
+                           :options {:type :integer}
+                           :changes {:foreign-key {:from :users/id
+                                                   :to :EMPTY}
+                                     :on-delete {:from :cascade
+                                                 :to :EMPTY}}
+                           :field-name :user-id
+                           :model-name :post})
             :q-edn [{:create-table [:users]
                      :with-columns ['(:id :serial [:constraint :users-pkey] :primary-key)]}
                     {:create-table [:post]
                      :with-columns ['(:id :serial [:constraint :post-pkey] :primary-key)
                                     '(:user-id :integer
-                                       [:constraint :post-user-id-fkey]
-                                       (:references :users :id)
-                                       [:raw "on delete"]
-                                       [:raw "cascade"])]}
+                                               [:constraint :post-user-id-fkey]
+                                               (:references :users :id)
+                                               [:raw "on delete"]
+                                               [:raw "cascade"])]}
                     {:alter-table '(:post {:drop-constraint :post-user-id-fkey})}]
             :q-sql [["CREATE TABLE users (id SERIAL CONSTRAINT users_pkey PRIMARY KEY)"]
                     [(str "CREATE TABLE post (id SERIAL CONSTRAINT post_pkey PRIMARY KEY,"
-                       " user_id INTEGER CONSTRAINT post_user_id_fkey REFERENCES users(id) on delete cascade)")]
+                          " user_id INTEGER CONSTRAINT post_user_id_fkey REFERENCES users(id) on delete cascade)")]
                     ["ALTER TABLE post DROP CONSTRAINT post_user_id_fkey"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial
@@ -360,7 +360,7 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "users"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "users")))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "users")))
       (is (= [{:character_maximum_length nil
                :column_default "nextval('post_id_seq'::regclass)"
                :column_name "id"
@@ -375,13 +375,13 @@
                :udt_name "int4"
                :is_nullable "YES"
                :table_name "post"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
 
     (testing "test constraints in db"
       (is (= []
-            (test-util/get-constraints-simple config/DATABASE-CONN
-              {:model-name-str "post"
-               :contype test-util/CONTYPE-FK}))))))
+             (test-util/get-constraints-simple config/DATABASE-CONN
+                                               {:model-name-str "post"
+                                                :contype test-util/CONTYPE-FK}))))))
 
 
 ; CHECK
@@ -396,9 +396,9 @@
                                 :model-name :post})
             :q-edn [{:create-table [:post]
                      :with-columns ['(:month :integer [:constraint :post-month-check]
-                                       [:check [:and [:> :month 0] [:<= :month 12]]])]}]
+                                             [:check [:and [:> :month 0] [:<= :month 12]]])]}]
             :q-sql [["CREATE TABLE post (month INTEGER CONSTRAINT post_month_check CHECK((month > 0) AND (month <= 12)))"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions []
              :existing-models {:post
@@ -414,16 +414,16 @@
                :udt_name "int4"
                :is_nullable "YES"
                :table_name "post"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
 
     (testing "test constraints in db"
       (is (= [{:conname "post_month_check"
                :contype "c"
                :pg_get_constraintdef "CHECK (((month > 0) AND (month <= 12)))"
                :table_name "post"}]
-            (test-util/get-constraints-simple config/DATABASE-CONN
-              {:model-name-str "post"
-               :contype test-util/CONTYPE-CHECK}))))))
+             (test-util/get-constraints-simple config/DATABASE-CONN
+                                               {:model-name-str "post"
+                                                :contype test-util/CONTYPE-CHECK}))))))
 
 
 (deftest test-add-column-with-check-constraint
@@ -438,11 +438,11 @@
             :q-edn [{:create-table [:post]
                      :with-columns ['(:id :serial)]}
                     {:add-column '(:month :integer [:constraint :post-month-check]
-                                    [:check [:and [:> :month 0] [:<= :month 12]]])
+                                          [:check [:and [:> :month 0] [:<= :month 12]]])
                      :alter-table :post}]
             :q-sql [["CREATE TABLE post (id SERIAL)"]
                     ["ALTER TABLE post ADD COLUMN month INTEGER CONSTRAINT post_month_check CHECK((month > 0) AND (month <= 12))"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}}
@@ -468,16 +468,16 @@
                :udt_name "int4"
                :is_nullable "YES"
                :table_name "post"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
 
     (testing "test constraints in db"
       (is (= [{:conname "post_month_check"
                :contype "c"
                :pg_get_constraintdef "CHECK (((month > 0) AND (month <= 12)))"
                :table_name "post"}]
-            (test-util/get-constraints-simple config/DATABASE-CONN
-              {:model-name-str "post"
-               :contype test-util/CONTYPE-CHECK}))))))
+             (test-util/get-constraints-simple config/DATABASE-CONN
+                                               {:model-name-str "post"
+                                                :contype test-util/CONTYPE-CHECK}))))))
 
 
 (deftest test-add-check-constraint-on-column
@@ -500,7 +500,7 @@
                               [:post-month-check [:check [:and [:> :month 0] [:<= :month 12]]]]})}]
             :q-sql [["CREATE TABLE post (month INTEGER)"]
                     ["ALTER TABLE post ADD CONSTRAINT post_month_check CHECK((month > 0) AND (month <= 12))"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:month {:type :integer}}
@@ -518,16 +518,16 @@
                :udt_name "int4"
                :is_nullable "YES"
                :table_name "post"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
 
     (testing "test constraints in db"
       (is (= [{:conname "post_month_check"
                :contype "c"
                :pg_get_constraintdef "CHECK (((month > 0) AND (month <= 12)))"
                :table_name "post"}]
-            (test-util/get-constraints-simple config/DATABASE-CONN
-              {:model-name-str "post"
-               :contype test-util/CONTYPE-CHECK}))))))
+             (test-util/get-constraints-simple config/DATABASE-CONN
+                                               {:model-name-str "post"
+                                                :contype test-util/CONTYPE-CHECK}))))))
 
 
 (deftest test-alter-check-constraint-on-column
@@ -543,15 +543,15 @@
                                 :model-name :post})
             :q-edn [{:create-table [:post]
                      :with-columns ['(:month :integer [:constraint :post-month-check]
-                                       [:check [:and [:> :month 0] [:<= :month 12]]])]}
+                                             [:check [:and [:> :month 0] [:<= :month 12]]])]}
                     {:alter-table
                      '(:post
-                        {:drop-constraint [[:raw "IF EXISTS"] :post-month-check]}
-                        {:add-constraint [:post-month-check [:check [:> :month 0]]]})}]
+                       {:drop-constraint [[:raw "IF EXISTS"] :post-month-check]}
+                       {:add-constraint [:post-month-check [:check [:> :month 0]]]})}]
             :q-sql [["CREATE TABLE post (month INTEGER CONSTRAINT post_month_check CHECK((month > 0) AND (month <= 12)))"]
                     [(str "ALTER TABLE post DROP CONSTRAINT IF EXISTS post_month_check,"
-                       " ADD CONSTRAINT post_month_check CHECK(month > 0)")]]}
-          (test-util/perform-make-and-migrate!
+                          " ADD CONSTRAINT post_month_check CHECK(month > 0)")]]}
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:month {:type :integer
@@ -570,16 +570,16 @@
                :udt_name "int4"
                :is_nullable "YES"
                :table_name "post"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
 
     (testing "test constraints in db"
       (is (= [{:conname "post_month_check"
                :contype "c"
                :pg_get_constraintdef "CHECK ((month > 0))"
                :table_name "post"}]
-            (test-util/get-constraints-simple config/DATABASE-CONN
-              {:model-name-str "post"
-               :contype test-util/CONTYPE-CHECK}))))))
+             (test-util/get-constraints-simple config/DATABASE-CONN
+                                               {:model-name-str "post"
+                                                :contype test-util/CONTYPE-CHECK}))))))
 
 
 (deftest test-drop-check-constraint-on-column
@@ -594,12 +594,12 @@
                                 :model-name :post})
             :q-edn [{:create-table [:post]
                      :with-columns ['(:month :integer [:constraint :post-month-check]
-                                       [:check [:and [:> :month 0] [:<= :month 12]]])]}
+                                             [:check [:and [:> :month 0] [:<= :month 12]]])]}
                     {:alter-table
                      '(:post {:drop-constraint :post-month-check})}]
             :q-sql [["CREATE TABLE post (month INTEGER CONSTRAINT post_month_check CHECK((month > 0) AND (month <= 12)))"]
                     ["ALTER TABLE post DROP CONSTRAINT post_month_check"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:month {:type :integer
@@ -618,13 +618,13 @@
                :udt_name "int4"
                :is_nullable "YES"
                :table_name "post"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "post"))))
 
     (testing "test constraints in db"
       (is (= []
-            (test-util/get-constraints-simple config/DATABASE-CONN
-              {:model-name-str "post"
-               :contype test-util/CONTYPE-CHECK}))))))
+             (test-util/get-constraints-simple config/DATABASE-CONN
+                                               {:model-name-str "post"
+                                                :contype test-util/CONTYPE-CHECK}))))))
 
 
 (deftest test-error-check-constraint-on-column
@@ -633,27 +633,27 @@
                   {:account
                    {:fields [[:thing :integer {:check nil}]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Option :check of field :account/thing should be a not empty vector.\n\n"
-               "  {:check nil}\n\n")
-            (with-out-str
-              (test-util/make-migration! params))))))
+                  "Option :check of field :account/thing should be a not empty vector.\n\n"
+                  "  {:check nil}\n\n")
+             (with-out-str
+               (test-util/make-migration! params))))))
 
   (testing "check can't be string"
     (let [params {:existing-models
                   {:account
                    {:fields [[:thing :integer {:check "WRONG"}]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Option :check of field :account/thing should be a not empty vector.\n\n"
-               "  {:check \"WRONG\"}\n\n")
-            (with-out-str
-              (test-util/make-migration! params))))))
+                  "Option :check of field :account/thing should be a not empty vector.\n\n"
+                  "  {:check \"WRONG\"}\n\n")
+             (with-out-str
+               (test-util/make-migration! params))))))
 
   (testing "check can't be an empty vector"
     (let [params {:existing-models
                   {:account
                    {:fields [[:thing :integer {:check []}]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Option :check of field :account/thing should be a not empty vector.\n\n"
-               "  {:check []}\n\n")
-            (with-out-str
-              (test-util/make-migration! params)))))))
+                  "Option :check of field :account/thing should be a not empty vector.\n\n"
+                  "  {:check []}\n\n")
+             (with-out-str
+               (test-util/make-migration! params)))))))

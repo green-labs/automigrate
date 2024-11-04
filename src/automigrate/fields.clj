@@ -45,77 +45,77 @@
 
 (s/def ::decimal-type
   (s/and
-    (s/cat
-      :type #{:decimal :numeric}
-      :precision pos-int?
-      :scale (s/? int?))
-    (s/conformer
-      (fn [value]
-        (->> (vector (:type value) (:precision value) (:scale value))
-          (filterv #(not (nil? %))))))))
+   (s/cat
+    :type #{:decimal :numeric}
+    :precision pos-int?
+    :scale (s/? int?))
+   (s/conformer
+    (fn [value]
+      (->> (vector (:type value) (:precision value) (:scale value))
+           (filterv #(not (nil? %))))))))
 
 
 (s/def ::keyword-type
   (s/and
-    keyword?
-    #{:integer
-      :smallint
-      :bigint
-      :float
-      :real
-      :decimal
-      :numeric
-      :serial
-      :bigserial
-      :smallserial
-      :uuid
-      :boolean
-      :text
-      :char
-      :varchar
-      :timestamp
-      :timestamptz
-      :date
-      :time
-      :timetz
-      :interval
-      :point
-      :json
-      :jsonb
-      :bit
-      :varbit
-      :box
-      :bytea
-      :cidr
-      :circle
-      :double-precision
-      :inet
-      :line
-      :lseg
-      :macaddr
-      :macaddr8
-      :money
-      :path
-      :pg_lsn
-      :pg_snapshot
-      :polygon
-      :tsquery
-      :tsvector
-      :txid_snapshot
-      :xml
+   keyword?
+   #{:integer
+     :smallint
+     :bigint
+     :float
+     :real
+     :decimal
+     :numeric
+     :serial
+     :bigserial
+     :smallserial
+     :uuid
+     :boolean
+     :text
+     :char
+     :varchar
+     :timestamp
+     :timestamptz
+     :date
+     :time
+     :timetz
+     :interval
+     :point
+     :json
+     :jsonb
+     :bit
+     :varbit
+     :box
+     :bytea
+     :cidr
+     :circle
+     :double-precision
+     :inet
+     :line
+     :lseg
+     :macaddr
+     :macaddr8
+     :money
+     :path
+     :pg_lsn
+     :pg_snapshot
+     :polygon
+     :tsquery
+     :tsvector
+     :txid_snapshot
+     :xml
       ; Range types
-      :int4range
-      :int4multirange
-      :int8range
-      :int8multirange
-      :numrange
-      :nummultirange
-      :tsrange
-      :tsmultirange
-      :tstzrange
-      :tstzmultirange
-      :daterange
-      :datemultirange}))
+     :int4range
+     :int4multirange
+     :int8range
+     :int8multirange
+     :numrange
+     :nummultirange
+     :tsrange
+     :tsmultirange
+     :tstzrange
+     :tstzmultirange
+     :daterange
+     :datemultirange}))
 
 
 (def ^:dynamic *custom-types* nil)
@@ -212,22 +212,22 @@
 
 (def ^:private type-hierarchy
   (-> (make-hierarchy)
-    (derive :smallint :integer)
-    (derive :bigint :integer)
-    (derive :serial :integer)
-    (derive :bigserial :integer)
-    (derive :smallserial :integer)
-    (derive :text :string)
-    (derive :varchar :string)
-    (derive :char :string)
-    (derive :numeric :decimal)
-    (derive :money :decimal)
-    (derive :date :timestamp)
-    (derive :time :timestamp)
-    (derive :uuid :string)
-    (derive :bool :boolean)
-    (derive :real :float)
-    (derive :double-precision :float)))
+      (derive :smallint :integer)
+      (derive :bigint :integer)
+      (derive :serial :integer)
+      (derive :bigserial :integer)
+      (derive :smallserial :integer)
+      (derive :text :string)
+      (derive :varchar :string)
+      (derive :char :string)
+      (derive :numeric :decimal)
+      (derive :money :decimal)
+      (derive :date :timestamp)
+      (derive :time :timestamp)
+      (derive :uuid :string)
+      (derive :bool :boolean)
+      (derive :real :float)
+      (derive :double-precision :float)))
 
 
 (defn check-type-group
@@ -253,8 +253,8 @@
 
 
 (s/def ::default-fn (s/cat
-                      :name keyword?
-                      :val (s/? (some-fn integer? float? string?))))
+                     :name keyword?
+                     :val (s/? (some-fn integer? float? string?))))
 
 
 (defmulti default-option class)
@@ -293,13 +293,13 @@
 (defmethod default-option PersistentVector
   [_]
   (s/and
-    ::default-fn
-    (s/conformer
-      (fn [value]
-        (let [fn-name (:name value)
-              fn-arg (:val value)]
-          (cond-> [fn-name]
-            (some? fn-arg) (conj fn-arg)))))))
+   ::default-fn
+   (s/conformer
+    (fn [value]
+      (let [fn-name (:name value)
+            fn-arg (:val value)]
+        (cond-> [fn-name]
+          (some? fn-arg) (conj fn-arg)))))))
 
 
 (s/def ::default
@@ -343,18 +343,18 @@
 
 (s/def ::options
   (s/keys
-    :opt-un [::null
-             ::primary-key
-             ::unique
-             ::default
-             ::foreign-key
-             ::on-delete
-             ::on-update
-             ::check
-             ::array
-             ::comment
-             ::collate
-             ::generated]))
+   :opt-un [::null
+            ::primary-key
+            ::unique
+            ::default
+            ::foreign-key
+            ::on-delete
+            ::on-update
+            ::check
+            ::array
+            ::comment
+            ::collate
+            ::generated]))
 
 
 (s/def ::options-strict-keys
@@ -381,17 +381,17 @@
 
 (s/def ::options-strict
   (s/and
-    ::options
-    ::options-strict-keys
-    ::validate-fk-options-on-delete
-    ::validate-fk-options-on-update))
+   ::options
+   ::options-strict-keys
+   ::validate-fk-options-on-delete
+   ::validate-fk-options-on-update))
 
 
 (s/def ::validate-default-and-null
   (fn [{:keys [null default] :as options}]
     (not (and (false? null)
-           (nil? default)
-           (contains? options :default)))))
+              (nil? default)
+              (contains? options :default)))))
 
 
 (s/def ::validate-fk-options-and-null-on-delete
@@ -430,8 +430,8 @@
 (defmethod validate-default-and-type :timestamp
   [{:keys [default]}]
   (or (s/valid? (s/tuple #{:now}) default)
-    (nil? default)
-    (string? default)))
+      (nil? default)
+      (string? default)))
 
 
 (defmethod validate-default-and-type :float
@@ -442,22 +442,22 @@
 (s/def ::numeric-str
   (fn [value]
     (and (string? value)
-      (number? (read-string value)))))
+         (number? (read-string value)))))
 
 
 (defmethod validate-default-and-type :decimal
   [{:keys [default]}]
   (or (s/valid? ::numeric-str default)
-    (decimal? default)
-    (int? default)
-    (float? default)
-    (nil? default)))
+      (decimal? default)
+      (int? default)
+      (float? default)
+      (nil? default)))
 
 
 (defmethod validate-default-and-type :enum
   [{:keys [default]}]
   (or (string? default)
-    (nil? default)))
+      (nil? default)))
 
 
 (defmethod validate-default-and-type :default
@@ -473,25 +473,25 @@
   (fn [{collate :collate
         column-type :type}]
     (or (nil? collate)
-      (= (check-type-group column-type) :string))))
+        (= (check-type-group column-type) :string))))
 
 
 (s/def ::field-with-type
   (s/merge
-    (s/keys
-      :req-un [::type])
-    ::options))
+   (s/keys
+    :req-un [::type])
+   ::options))
 
 
 (s/def ::field
   (s/and
     ; TODO: add ::field-with-type-strict-keys
-    ::field-with-type
-    ::validate-default-and-null
-    ::validate-fk-options-and-null-on-delete
-    ::validate-fk-options-and-null-on-update
-    ::validate-default-and-type
-    ::validate-type-for-collate))
+   ::field-with-type
+   ::validate-default-and-null
+   ::validate-fk-options-and-null-on-delete
+   ::validate-fk-options-and-null-on-update
+   ::validate-default-and-type
+   ::validate-type-for-collate))
 
 
 (s/def ::field-name keyword?)
@@ -499,9 +499,9 @@
 
 (s/def ::field-vec
   (s/cat
-    :name ::field-name
-    :type ::type
-    :options (s/? ::options-strict)))
+   :name ::field-name
+   :type ::type
+   :options (s/? ::options-strict)))
 
 
 (s/def ::fields

@@ -10,45 +10,45 @@
 ; TODO: update custom clauses with more precise formatters
 
 (honey/register-clause! :drop-constraint
-  (fn [k spec]
-    (#'honey/format-selector k spec))
-  :rename-table)
+                        (fn [k spec]
+                          (#'honey/format-selector k spec))
+                        :rename-table)
 
 
 (honey/register-clause! :add-constraint
-  (fn [k spec]
-    (#'honey/format-add-item k spec))
-  :drop-constraint)
+                        (fn [k spec]
+                          (#'honey/format-add-item k spec))
+                        :drop-constraint)
 
 
 (honey/register-clause! :create-index
-  (fn [k spec]
-    (#'honey/format-add-item k spec))
-  :add-index)
+                        (fn [k spec]
+                          (#'honey/format-add-item k spec))
+                        :add-index)
 
 
 (honey/register-clause! :create-unique-index
-  (fn [k spec]
-    (#'honey/format-add-item k spec))
-  :add-index)
+                        (fn [k spec]
+                          (#'honey/format-add-item k spec))
+                        :add-index)
 
 
 (honey/register-clause! :create-type
-  (fn [k spec]
-    (#'honey/format-add-item k spec))
-  :create-unique-index)
+                        (fn [k spec]
+                          (#'honey/format-add-item k spec))
+                        :create-unique-index)
 
 
 (honey/register-clause! :drop-type
-  (fn [k spec]
-    (#'honey/format-add-item k spec))
-  :create-type)
+                        (fn [k spec]
+                          (#'honey/format-add-item k spec))
+                        :create-type)
 
 
 (honey/register-clause! :alter-type
-  (fn [k spec]
-    (#'honey/format-add-item k spec))
-  :drop-type)
+                        (fn [k spec]
+                          (#'honey/format-add-item k spec))
+                        :drop-type)
 
 
 ; Public
@@ -89,7 +89,7 @@
         :with-columns [[:id :serial [:not nil] [:primary-key]]
                        [:name [:varchar 255] [:not nil] :unique]
                        [:created_at :timestamp [:default [:now]]]]}
-    (exec! db)))
+       (exec! db)))
 
 
 (defn kw->raw

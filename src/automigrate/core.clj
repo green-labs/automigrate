@@ -27,20 +27,20 @@
 
 (s/def ::cmd
   (s/and
-    (s/conformer symbol)
-    (set automigrate-help/HELP-CMDS-ORDER)))
+   (s/conformer symbol)
+   (set automigrate-help/HELP-CMDS-ORDER)))
 
 
 (s/def ::format
   (s/and
-    (s/conformer keyword)
-    #{:sql :human}))
+   (s/conformer keyword)
+   #{:sql :human}))
 
 
 (s/def ::type
   (s/and
-    (s/conformer keyword)
-    #{migrations/EMPTY-SQL-MIGRATION-TYPE}))
+   (s/conformer keyword)
+   #{migrations/EMPTY-SQL-MIGRATION-TYPE}))
 
 
 (s/def ::name (s/conformer name))
@@ -48,71 +48,71 @@
 
 (s/def ::migrations-table
   (s/and
-    string?
-    (s/conformer
-      (fn [v]
-        (keyword (str/replace v #"_" "-"))))))
+   string?
+   (s/conformer
+    (fn [v]
+      (keyword (str/replace v #"_" "-"))))))
 
 
 (s/def ::direction
   (s/and
-    (s/conformer keyword)
-    #{:forward :backward}))
+   (s/conformer keyword)
+   #{:forward :backward}))
 
 
 (s/def ::make-args
   (s/keys
-    :opt-un [::type
-             ::name
-             ::models-file
-             ::migrations-dir
-             ::resources-dir
-             ::custom-types]))
+   :opt-un [::type
+            ::name
+            ::models-file
+            ::migrations-dir
+            ::resources-dir
+            ::custom-types]))
 
 
 (s/def ::migrate-args
   (s/keys
-    :req-un [::jdbc-url]
-    :opt-un [::migrations-dir
-             ::number
-             ::migrations-table
-             ::jdbc-url-env-var]))
+   :req-un [::jdbc-url]
+   :opt-un [::migrations-dir
+            ::number
+            ::migrations-table
+            ::jdbc-url-env-var]))
 
 
 (s/def ::explain-args
   (s/keys
-    :req-un [::number]
-    :opt-un [::migrations-dir
-             ::direction
-             ::format]))
+   :req-un [::number]
+   :opt-un [::migrations-dir
+            ::direction
+            ::format]))
 
 
 (s/def ::list-args
   (s/keys
-    :req-un [::jdbc-url]
-    :opt-un [::migrations-table
-             ::migrations-dir
-             ::jdbc-url-env-var]))
+   :req-un [::jdbc-url]
+   :opt-un [::migrations-table
+            ::migrations-dir
+            ::jdbc-url-env-var]))
 
 
 (s/def ::help-args
   (s/keys
-    :opt-un [::cmd]))
+   :opt-un [::cmd]))
 
 
 (defn- run-fn
   [f args args-spec]
   (try+
-    (let [args* (spec-util/conform args-spec (or args {}))]
-      (f args*))
-    (catch [:type ::s/invalid] e
-      (file-util/prn-err e))
-    (catch Object e
-      (let [message (or (ex-message e) (str e))]
-        (-> {:title "UNEXPECTED ERROR"
-             :message message}
-          (errors/custom-error->error-report)
-          (file-util/prn-err))))))
+   (let [args* (spec-util/conform args-spec (or args {}))]
+     (f args*))
+   (catch [:type ::s/invalid] e
+     (file-util/prn-err e))
+   (catch Object e
+     (let [message (or (ex-message e) (str e))]
+       (-> {:title "UNEXPECTED ERROR"
+            :message message}
+           (errors/custom-error->error-report)
+           (file-util/prn-err))))))
 
 
 ; Public interface
@@ -203,27 +203,27 @@ Available options:
 
 (def cli-options-explain
   (concat
-    cli-options-common
-    [["-n" "--number NUMBER"
-      :parse-fn #(Integer/parseInt %)]
-     ["-d" "--direction DIRECTION"]
-     ["-f" "--format FORMAT"]]))
+   cli-options-common
+   [["-n" "--number NUMBER"
+     :parse-fn #(Integer/parseInt %)]
+    ["-d" "--direction DIRECTION"]
+    ["-f" "--format FORMAT"]]))
 
 
 (def cli-options-make
   (concat
-    cli-options-common
-    [[nil "--name NAME"]
-     [nil "--type TYPE"]
-     [nil "--custom-types TYPES"
-      :parse-fn #(set (map keyword (str/split % #",")))]]))
+   cli-options-common
+   [[nil "--name NAME"]
+    [nil "--type TYPE"]
+    [nil "--custom-types TYPES"
+     :parse-fn #(set (map keyword (str/split % #",")))]]))
 
 
 (def cli-options-migrate
   (concat
-    cli-options-common
-    [["-n" "--number NUMBER"
-      :parse-fn #(Integer/parseInt %)]]))
+   cli-options-common
+   [["-n" "--number NUMBER"
+     :parse-fn #(Integer/parseInt %)]]))
 
 
 (def cli-options-help

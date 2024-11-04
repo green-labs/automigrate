@@ -66,8 +66,8 @@
                        :with-columns
                        [(list :thing (or edn field-type))]}]
               :q-sql [[(format "CREATE TABLE account (thing %s)"
-                         (or sql (str/upper-case field-name)))]]}
-            (test-util/perform-make-and-migrate!
+                               (or sql (str/upper-case field-name)))]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions []
                :existing-models {:account
@@ -84,7 +84,7 @@
                :datetime_precision (if (vector? field-type)
                                      (last field-type)
                                      6)}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"
               {:add-cols [:datetime_precision]}))))))
@@ -124,8 +124,8 @@
                        :with-columns
                        [(list :thing (or edn field-type) [:raw "[][]"])]}]
               :q-sql [[(format "CREATE TABLE account (thing %s [][])"
-                         (or sql (str/upper-case field-name)))]]}
-            (test-util/perform-make-and-migrate!
+                               (or sql (str/upper-case field-name)))]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions []
                :existing-models {:account
@@ -140,7 +140,7 @@
                :is_nullable "YES"
                :table_name "account"
                :datetime_precision nil}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"
               {:add-cols [:datetime_precision]}))))))
@@ -173,16 +173,16 @@
                       {:add-column (list :thing [:raw (str type-name-up "(3)")])
                        :alter-table :account}
                       {:alter-table (list :account
-                                      {:alter-column
-                                       (list :thing :type [:raw (str type-name-up "(6)")]
-                                         :using [:raw "thing"] [:raw "::"]
-                                         [:raw (str type-name-up "(6)")])})}]
+                                          {:alter-column
+                                           (list :thing :type [:raw (str type-name-up "(6)")]
+                                                 :using [:raw "thing"] [:raw "::"]
+                                                 [:raw (str type-name-up "(6)")])})}]
               :q-sql [["CREATE TABLE account (id SERIAL)"]
                       [(format "ALTER TABLE account ADD COLUMN thing %s(3)"
-                         type-name-up)]
+                               type-name-up)]
                       [(format "ALTER TABLE account ALTER COLUMN thing TYPE %s(6) USING thing :: %s(6)"
-                         type-name-up type-name-up)]]}
-            (test-util/perform-make-and-migrate!
+                               type-name-up type-name-up)]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}}
@@ -212,7 +212,7 @@
                :is_nullable "YES"
                :table_name "account"
                :datetime_precision 6}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"
               {:add-cols [:datetime_precision]}))))))
@@ -245,15 +245,15 @@
                        :alter-table :account}
                       {:alter-table
                        (list :account
-                         {:alter-column
-                          (list :thing :type field-type [:raw "[][202][1]"]
-                            :using [:raw "thing"] [:raw "::"] field-type [:raw "[][202][1]"])})}]
+                             {:alter-column
+                              (list :thing :type field-type [:raw "[][202][1]"]
+                                    :using [:raw "thing"] [:raw "::"] field-type [:raw "[][202][1]"])})}]
               :q-sql [["CREATE TABLE account (id SERIAL)"]
                       ["ALTER TABLE account ADD COLUMN thing TEXT"]
                       [(format "ALTER TABLE account ALTER COLUMN thing TYPE %s [][202][1] USING thing :: %s [][202][1]"
-                         type-name-up
-                         type-name-up)]]}
-            (test-util/perform-make-and-migrate!
+                               type-name-up
+                               type-name-up)]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}}
@@ -283,7 +283,7 @@
                :is_nullable "YES"
                :table_name "account"
                :datetime_precision nil}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"
               {:add-cols [:datetime_precision]}))))))
@@ -330,16 +330,16 @@
               :q-edn [{:create-table [:account]
                        :with-columns ['(:id :serial)]}
                       {:add-column (list :thing
-                                     (if (vector? field-type)
-                                       [:raw (format "%s(%s)" type-name-up precision)]
-                                       field-type))
+                                         (if (vector? field-type)
+                                           [:raw (format "%s(%s)" type-name-up precision)]
+                                           field-type))
                        :alter-table :account}]
               :q-sql [["CREATE TABLE account (id SERIAL)"]
                       [(format "ALTER TABLE account ADD COLUMN thing %s"
-                         (if (vector? field-type)
-                           (format "%s(%s)" type-name-up precision)
-                           type-name-up))]]}
-            (test-util/perform-make-and-migrate!
+                               (if (vector? field-type)
+                                 (format "%s(%s)" type-name-up precision)
+                                 type-name-up))]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}}
@@ -365,7 +365,7 @@
                :is_nullable "YES"
                :table_name "account"
                :datetime_precision precision}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"
               {:add-cols [:datetime_precision]}))))))
@@ -403,17 +403,17 @@
               :q-edn [{:create-table [:account]
                        :with-columns ['(:id :serial)
                                       (list :thing
-                                        (if (vector? field-type)
-                                          [:raw (format "%s(%s)" type-name-up precision)]
-                                          field-type))]}
+                                            (if (vector? field-type)
+                                              [:raw (format "%s(%s)" type-name-up precision)]
+                                              field-type))]}
                       {:drop-column :thing
                        :alter-table :account}]
               :q-sql [[(format "CREATE TABLE account (id SERIAL, thing %s)"
-                         (if (vector? field-type)
-                           (format "%s(%s)" type-name-up precision)
-                           type-name-up))]
+                               (if (vector? field-type)
+                                 (format "%s(%s)" type-name-up precision)
+                                 type-name-up))]
                       ["ALTER TABLE account DROP COLUMN thing"]]}
-            (test-util/perform-make-and-migrate!
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}
@@ -430,7 +430,7 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db
+             (test-util/get-table-schema-from-db
               config/DATABASE-CONN
               "account"))))))
 
@@ -447,7 +447,7 @@
                      :alter-table :account}]
             :q-sql [["CREATE TABLE account (id SERIAL, thing INTERVAL [][])"]
                     ["ALTER TABLE account DROP COLUMN thing"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}
@@ -465,7 +465,7 @@
              :udt_name "int4"
              :is_nullable "NO"
              :table_name "account"}]
-          (test-util/get-table-schema-from-db
+           (test-util/get-table-schema-from-db
             config/DATABASE-CONN
             "account")))))
 
@@ -487,101 +487,101 @@
                                    [:times :time {:array "[]"}]
                                    [:durations :interval {:array "[10][10]"}]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-fields-time-error
   (doseq [{:keys [field-type expected-output]}
           [{:field-type [:interval]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing.\n\n"
-                               "  [:interval]\n\n")}
+                                  "Invalid definition of type for field :account/thing.\n\n"
+                                  "  [:interval]\n\n")}
            {:field-type [:interval 10]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing."
-                               " The allowed range of precision is from 0 to 6.\n\n"
-                               "  10\n\n")}
+                                  "Invalid definition of type for field :account/thing."
+                                  " The allowed range of precision is from 0 to 6.\n\n"
+                                  "  10\n\n")}
 
            {:field-type [:time]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing.\n\n"
-                               "  [:time]\n\n")}
+                                  "Invalid definition of type for field :account/thing.\n\n"
+                                  "  [:time]\n\n")}
            {:field-type [:time 10]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing."
-                               " The allowed range of precision is from 0 to 6.\n\n"
-                               "  10\n\n")}
+                                  "Invalid definition of type for field :account/thing."
+                                  " The allowed range of precision is from 0 to 6.\n\n"
+                                  "  10\n\n")}
 
            {:field-type [:timetz]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing.\n\n"
-                               "  [:timetz]\n\n")}
+                                  "Invalid definition of type for field :account/thing.\n\n"
+                                  "  [:timetz]\n\n")}
            {:field-type [:timetz 10]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing."
-                               " The allowed range of precision is from 0 to 6.\n\n"
-                               "  10\n\n")}
+                                  "Invalid definition of type for field :account/thing."
+                                  " The allowed range of precision is from 0 to 6.\n\n"
+                                  "  10\n\n")}
 
            {:field-type [:timestamp]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing.\n\n"
-                               "  [:timestamp]\n\n")}
+                                  "Invalid definition of type for field :account/thing.\n\n"
+                                  "  [:timestamp]\n\n")}
            {:field-type [:timestamp 10]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing."
-                               " The allowed range of precision is from 0 to 6.\n\n"
-                               "  10\n\n")}
+                                  "Invalid definition of type for field :account/thing."
+                                  " The allowed range of precision is from 0 to 6.\n\n"
+                                  "  10\n\n")}
 
            {:field-type [:timestamptz]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing.\n\n"
-                               "  [:timestamptz]\n\n")}
+                                  "Invalid definition of type for field :account/thing.\n\n"
+                                  "  [:timestamptz]\n\n")}
            {:field-type [:timestamptz 10]
             :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                               "Invalid definition of type for field :account/thing."
-                               " The allowed range of precision is from 0 to 6.\n\n"
-                               "  10\n\n")}]]
+                                  "Invalid definition of type for field :account/thing."
+                                  " The allowed range of precision is from 0 to 6.\n\n"
+                                  "  10\n\n")}]]
 
     (let [params {:existing-models
                   {:account
                    {:fields [[:thing field-type]]}}}]
       (is (= expected-output
-            (with-out-str
-              (test-util/make-migration! params)))))))
+             (with-out-str
+               (test-util/make-migration! params)))))))
 
 
 (deftest test-fields-interval-type-with-wrong-array-option-value-error
   (testing "not balanced brackets as :array value"
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Option :array of field :account/thing should be string"
-             " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
-             "  {:array \"[][\"}\n\n")
-          (with-out-str
-            (test-util/make-migration!
+                "Option :array of field :account/thing should be string"
+                " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
+                "  {:array \"[][\"}\n\n")
+           (with-out-str
+             (test-util/make-migration!
               {:existing-models
                {:account
                 {:fields [[:thing :interval {:array "[]["}]]}}})))))
 
   (testing "integer instead of string"
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Option :array of field :account/thing should be string"
-             " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
-             "  {:array 2}\n\n")
-          (with-out-str
-            (test-util/make-migration!
+                "Option :array of field :account/thing should be string"
+                " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
+                "  {:array 2}\n\n")
+           (with-out-str
+             (test-util/make-migration!
               {:existing-models
                {:account
                 {:fields [[:thing :interval {:array 2}]]}}})))))
 
   (testing "array size can't be 0"
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Option :array of field :account/thing should be string"
-             " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
-             "  {:array \"[0]\"}\n\n")
-          (with-out-str
-            (test-util/make-migration!
+                "Option :array of field :account/thing should be string"
+                " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
+                "  {:array \"[0]\"}\n\n")
+           (with-out-str
+             (test-util/make-migration!
               {:existing-models
                {:account
                 {:fields [[:thing :interval {:array "[0]"}]]}}}))))))
