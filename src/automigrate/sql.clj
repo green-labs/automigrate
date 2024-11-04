@@ -415,6 +415,7 @@
     [:primary-key field-name]]})
 
 
+#_{:clj-kondo/ignore [:unused-value]}
 (defn- alter-unique->edn
   [model-name field-name]
   {:add-index [:unique nil field-name]}
