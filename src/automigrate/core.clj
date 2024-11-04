@@ -9,7 +9,8 @@
             [automigrate.util.spec :as spec-util]
             [automigrate.util.file :as file-util]
             [automigrate.errors :as errors]
-            [automigrate.help :as automigrate-help])
+            [automigrate.help :as automigrate-help]
+            [automigrate.fields :as fields])
   (:refer-clojure :exclude [list]))
 
 
@@ -21,6 +22,7 @@
 (s/def ::jdbc-url (s/and some? (s/conformer str)))
 (s/def ::jdbc-url-env-var string?)
 (s/def ::number int?)
+(s/def ::custom-types (s/coll-of keyword? :kind set?))
 
 
 (s/def ::cmd
@@ -64,7 +66,8 @@
              ::name
              ::models-file
              ::migrations-dir
-             ::resources-dir]))
+             ::resources-dir
+             ::custom-types]))
 
 
 (s/def ::migrate-args
@@ -123,9 +126,11 @@ Available options:
           Set `:empty-sql` - for creating an empty raw SQL migration. (optional)
   :models-file - Path to the file with model definitions relative to the `resources` dir. Default: `db/models.edn`. (optional)
   :migrations-dir - Path to directory containing migration files relative to the `resources` dir. Default: `db/migrations`. (optional)
-  :resources-dir - Path to resources dir to create migrations dir, if it doesn't exist. Default: `resources` (optional)"
-  [args]
-  (run-fn migrations/make-migration args ::make-args))
+  :resources-dir - Path to resources dir to create migrations dir, if it doesn't exist. Default: `resources` (optional)
+  :custom-types - Set of custom field types to be used in models. Example: #{:dml-type}. (optional)"
+  [{:keys [custom-types] :as args}]
+  (binding [fields/*custom-types* custom-types]
+    (run-fn migrations/make-migration args ::make-args)))
 
 
 (defn migrate
@@ -136,14 +141,16 @@ Available options:
   :jdbc-url - JDBC url for the database connection. Default: get from `DATABASE_URL` env var. (optional)
   :jdbc-url-env-var - Name of environment variable for jdbc-url. Default: `DATABASE_URL`. (optional)
   :migrations-dir - Path to directory containing migration files relative to the `resources` dir. Default: `db/migrations`. (optional)
-  :migrations-table - Custom name for the migrations table in the database. (optional)"
+  :migrations-table - Custom name for the migrations table in the database. (optional)
+  :custom-types - Set of custom field types to be used in models. Example: #{:dml-type}. (optional)"
   ([]
    ; 0-arity function can be used inside application code if there are no any options.
    (migrate {}))
-  ([{:keys [jdbc-url-env-var] :as args}]
-   (let [jdbc-url-env-var* (or jdbc-url-env-var JDBC-URL-ENV-VAR)
-         args* (update args :jdbc-url #(or % (System/getenv jdbc-url-env-var*)))]
-     (run-fn migrations/migrate args* ::migrate-args))))
+  ([{:keys [jdbc-url-env-var custom-types] :as args}]
+   (binding [fields/*custom-types* custom-types]
+     (let [jdbc-url-env-var* (or jdbc-url-env-var JDBC-URL-ENV-VAR)
+           args* (update args :jdbc-url #(or % (System/getenv jdbc-url-env-var*)))]
+       (run-fn migrations/migrate args* ::migrate-args)))))
 
 
 (defn explain
@@ -153,9 +160,11 @@ Available options:
   :number - Integer number of the migration to explain. (required)
   :direction - Direction of the migration to explain, can be `forward` (default) or `backward`. (optional)
   :format - Format of explanation, can be `sql` (default) or `human`. (optional)
-  :migrations-dir - Path to directory containing migration files relative to the `resources` dir. Default: `db/migrations`. (optional)"
-  [args]
-  (run-fn migrations/explain args ::explain-args))
+  :migrations-dir - Path to directory containing migration files relative to the `resources` dir. Default: `db/migrations`. (optional)
+  :custom-types - Set of custom field types to be used in models. Example: #{:dml-type}. (optional)"
+  [{:keys [custom-types] :as args}]
+  (binding [fields/*custom-types* custom-types] 
+    (run-fn migrations/explain args ::explain-args)))
 
 
 (defn list
@@ -204,8 +213,10 @@ Available options:
 (def cli-options-make
   (concat
     cli-options-common
-    [[nil "--name NAME"]]
-    [[nil "--type TYPE"]]))
+    [[nil "--name NAME"]
+     [nil "--type TYPE"]
+     [nil "--custom-types TYPES"
+      :parse-fn #(set (map keyword (str/split % #",")))]]))
 
 
 (def cli-options-migrate
