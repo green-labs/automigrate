@@ -123,10 +123,10 @@
 
 (s/def :automigrate.sql.option->sql/generated
   (s/and
-    ::fields/generated
-    (s/conformer
-      (fn [value]
-        [:raw (format "GENERATED ALWAYS AS (%s) STORED" value)]))))
+   ::fields/generated
+   (s/conformer
+    (fn [value]
+      [:raw (format "GENERATED ALWAYS AS (%s) STORED" value)]))))
 
 (def ^:private options-specs
   [:automigrate.sql.option->sql/null

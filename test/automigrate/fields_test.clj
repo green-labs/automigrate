@@ -289,7 +289,7 @@
   (testing "check valid collate ok"
     (is (true? (s/valid? ::fields/validate-type-for-collate {:type :text
                                                              :collate "ko_KR"}))))
-  
+
   (testing "check invalid collate err"
     (is (false? (s/valid? ::fields/validate-type-for-collate {:type :timestamp
                                                               :collate "ko_KR"})))))
