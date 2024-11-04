@@ -388,7 +388,7 @@ Common args for all commands:
 | `:migrations-dir`   | Path to store migrations dir, relative to the `resources` dir.            | `false`   | string path (example: `"path/to/migrations"`)                                                    | `"db/migrations"`                                           |
 | `:resources-dir`    | Path to resources dir to create migrations dir when it doesn't exist yet. | `false`   | string path (example: `"path/to/resources"`)                                                     | `"resources"`                                               |
 | `:migrations-table` | Model name for storing applied migrations.                                | `false`   | string (example: `"migrations"`)                                                                 | `"automigrate_migrations"`                                  |
-| `:custom-types`     | Set of custom field types to be used in models.                          | `false`   | `nil`                                                       |
+| `:custom-types`     | Set of custom field types to be used in models.                          | `false`   | comma seperated strings (example: `"dml-type,my-type"`)                                                       |
 
 ### `make`
 
@@ -795,13 +795,6 @@ make deploy-snapshot :patch  # build and deploy to Clojars next snapshot version
 make release :patch  # bump git tag version by semver rules and push to remote repo
 ```
 
-
-## License
-
-Copyright © 2021 Andrey Bogoyavlenskiy
-
-Distributed under the MIT License.
-
 ### Custom field types
 
 You can use custom field types in your models by providing a set of custom types to the commands:
@@ -827,3 +820,9 @@ Note: The custom type must be already defined in your database before using it i
 ```sql
 CREATE TYPE dml_type AS ENUM ('INSERT', 'UPDATE', 'DELETE');
 ```
+
+## License
+
+Copyright © 2021 Andrey Bogoyavlenskiy
+
+Distributed under the MIT License.
