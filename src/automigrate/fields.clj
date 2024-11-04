@@ -136,7 +136,7 @@
 
 (defmethod field-type :keyword
   [value]
-  (if (and (some? *custom-types*) 
+  (if (and (some? *custom-types*)
            (contains? *custom-types* value))
     ::custom-type
     ::keyword-type))

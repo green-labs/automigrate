@@ -15,16 +15,16 @@
 (deftest test-validate-fk-options-on-delete
   (testing "check no fk and no on-delete ok"
     (is (true?
-          (s/valid? ::fields/validate-fk-options-on-delete {:null true}))))
+         (s/valid? ::fields/validate-fk-options-on-delete {:null true}))))
   (testing "check fk and on-delete ok"
     (is (true?
-          (s/valid? ::fields/validate-fk-options-on-delete {:null true
-                                                            :foreign-key :account/id
-                                                            :on-delete :cascade}))))
+         (s/valid? ::fields/validate-fk-options-on-delete {:null true
+                                                           :foreign-key :account/id
+                                                           :on-delete :cascade}))))
   (testing "check no fk and on-delete err"
     (is (false?
-          (s/valid? ::fields/validate-fk-options-on-delete {:null true
-                                                            :on-delete :cascade})))))
+         (s/valid? ::fields/validate-fk-options-on-delete {:null true
+                                                           :on-delete :cascade})))))
 
 
 (deftest test-validate-fk-options-on-update

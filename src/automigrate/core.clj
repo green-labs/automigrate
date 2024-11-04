@@ -163,7 +163,7 @@ Available options:
   :migrations-dir - Path to directory containing migration files relative to the `resources` dir. Default: `db/migrations`. (optional)
   :custom-types - Set of custom field types to be used in models. Example: #{:dml-type}. (optional)"
   [{:keys [custom-types] :as args}]
-  (binding [fields/*custom-types* custom-types] 
+  (binding [fields/*custom-types* custom-types]
     (run-fn migrations/explain args ::explain-args)))
 
 
