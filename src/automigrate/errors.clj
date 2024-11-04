@@ -1,9 +1,9 @@
 (ns automigrate.errors
   (:require
-    [automigrate.util.validation :as validation-util]
-    [clojure.string :as str]
-    [clojure.spec.alpha :as s]
-    [clojure.set :as set]))
+   [automigrate.util.validation :as validation-util]
+   [clojure.string :as str]
+   [clojure.spec.alpha :as s]
+   [clojure.set :as set]))
 
 
 (def ^:private ERROR-TEMPLATE
@@ -22,9 +22,9 @@
   "Return duplicated items in collection."
   [items]
   (->> items
-    (frequencies)
-    (filter #(> (val %) 1))
-    (keys)))
+       (frequencies)
+       (filter #(> (val %) 1))
+       (keys)))
 
 
 (defn- get-model-name
@@ -61,7 +61,7 @@
 (defn- get-field-name
   [data]
   (if (and (= :automigrate.actions/->migrations (:main-spec data))
-        (contains? #{:add-column :alter-column} (-> data :path first)))
+           (contains? #{:add-column :alter-column} (-> data :path first)))
     (get-in (:origin-value data) [(first (:in data)) :field-name])
     (let [path (get-model-items-path data :fields)
           last-item (peek path)]
@@ -127,11 +127,11 @@
 
 (def ^:private error-hierarchy
   (-> (make-hierarchy)
-    (derive :automigrate.fields/field-with-type :automigrate.fields/field)
-    (derive :automigrate.core/make-args ::common-command-args-errors)
-    (derive :automigrate.core/migrate-args :automigrate.core/make-args)
-    (derive :automigrate.core/explain-args :automigrate.core/make-args)
-    (derive :automigrate.core/list-args :automigrate.core/make-args)))
+      (derive :automigrate.fields/field-with-type :automigrate.fields/field)
+      (derive :automigrate.core/make-args ::common-command-args-errors)
+      (derive :automigrate.core/migrate-args :automigrate.core/make-args)
+      (derive :automigrate.core/explain-args :automigrate.core/make-args)
+      (derive :automigrate.core/list-args :automigrate.core/make-args)))
 
 
 (defmulti ->error-title :main-spec
@@ -204,8 +204,8 @@
       (format "Model %s should contain the key :fields." model-name)
 
       "no method" (add-error-value
-                    (format "Model %s should be a map or a vector." model-name)
-                    (:val data))
+                   (format "Model %s should be a map or a vector." model-name)
+                   (:val data))
 
       (format "Invalid definition of the model %s." model-name))))
 
@@ -217,8 +217,8 @@
       (condp = (:pred data)
         '(clojure.core/fn [%] (clojure.core/contains? % :fields))
         (add-error-value
-          (format "Model %s should contain :fields key." model-name)
-          (:val data))
+         (format "Model %s should contain :fields key." model-name)
+         (:val data))
 
         (format "Model %s should be a map." model-name)))))
 
@@ -236,16 +236,16 @@
       (condp = (:pred data)
         '(clojure.core/<= 1 (clojure.core/count %) Integer/MAX_VALUE)
         (add-error-value
-          (format "Model %s should contain at least one field." model-name)
-          (:val data))
+         (format "Model %s should contain at least one field." model-name)
+         (:val data))
 
         `vector? (add-error-value
-                   (format "Model %s should be a vector." model-name)
-                   (:val data))
+                  (format "Model %s should be a vector." model-name)
+                  (:val data))
 
         'distinct? (add-error-value
-                     (format "Model %s has duplicated fields." model-name)
-                     (:val data))
+                    (format "Model %s has duplicated fields." model-name)
+                    (:val data))
 
         (format "Fields definition error in model %s." model-name)))))
 
@@ -256,16 +256,16 @@
     (condp = (:pred data)
       '(clojure.core/<= 1 (clojure.core/count %) Integer/MAX_VALUE)
       (add-error-value
-        (format "Model %s should contain at least one index if :indexes key exists." model-name)
-        (:val data))
+       (format "Model %s should contain at least one index if :indexes key exists." model-name)
+       (:val data))
 
       `vector? (add-error-value
-                 (format "Indexes definition of model %s should be a vector." model-name)
-                 (:val data))
+                (format "Indexes definition of model %s should be a vector." model-name)
+                (:val data))
 
       'distinct? (add-error-value
-                   (format "Indexes definition of model %s has duplicated indexes." model-name)
-                   (:val data))
+                  (format "Indexes definition of model %s has duplicated indexes." model-name)
+                  (:val data))
 
       (format "Indexes definition error in model %s." model-name))))
 
@@ -276,11 +276,11 @@
     (if (= "Extra input" (:reason data))
       (let [fq-index-name (get-fq-index-name data)]
         (add-error-value
-          (format "Index %s has extra value in definition." fq-index-name)
-          (:val data)))
+         (format "Index %s has extra value in definition." fq-index-name)
+         (:val data)))
       (add-error-value
-        (format "Invalid index definition in model %s." model-name)
-        (:val data)))))
+       (format "Invalid index definition in model %s." model-name)
+       (:val data)))))
 
 
 (defmethod ->error-message :automigrate.indexes/fields
@@ -288,10 +288,10 @@
   (let [model-name (get-model-name data)
         fq-index-name (get-fq-index-name data)]
     (add-error-value
-      (format "Index %s should have :fields option as vector with distinct fields of the model %s."
-        fq-index-name
-        model-name)
-      (:val data))))
+     (format "Index %s should have :fields option as vector with distinct fields of the model %s."
+             fq-index-name
+             model-name)
+     (:val data))))
 
 
 (defmethod ->error-message :automigrate.types/choices
@@ -301,19 +301,19 @@
     (condp = (:pred data)
       '(clojure.core/<= 1 (clojure.core/count %) Integer/MAX_VALUE)
       (add-error-value
-        (format "Enum type %s should contain at least one choice."
-          fq-type-name)
-        '())
+       (format "Enum type %s should contain at least one choice."
+               fq-type-name)
+       '())
 
       `vector? (add-error-value
-                 (format "Choices definition of type %s should be a vector of strings."
-                   fq-type-name)
-                 (:val data))
+                (format "Choices definition of type %s should be a vector of strings."
+                        fq-type-name)
+                (:val data))
 
       'distinct? (add-error-value
-                   (format "Enum type definition %s has duplicated choices."
-                     fq-type-name)
-                   (:val data))
+                  (format "Enum type definition %s has duplicated choices."
+                          fq-type-name)
+                  (:val data))
 
       (format "Enum type definition error in model %s." model-name))))
 
@@ -333,8 +333,8 @@
   (let [fq-type-name (get-fq-type-name data)]
     (condp = (:pred data)
       '(clojure.spec.alpha/and
-         :automigrate.types/type-vec-options
-         :automigrate.types/type-vec-options-strict-keys)
+        :automigrate.types/type-vec-options
+        :automigrate.types/type-vec-options-strict-keys)
       (format "Enum type %s misses :choices option." fq-type-name)
 
       (format "Invalid definition of the enum type %s." fq-type-name))))
@@ -392,8 +392,8 @@
     (if (= "Insufficient input" (:reason data))
       (format "Missing index name in model %s." model-name)
       (add-error-value
-        (format "Invalid index name in model %s. Index name should be a keyword." model-name)
-        (:val data)))))
+       (format "Invalid index name in model %s. Index name should be a keyword." model-name)
+       (:val data)))))
 
 
 (defmethod ->error-message :automigrate.indexes/type
@@ -403,24 +403,24 @@
     (if (= "Insufficient input" (:reason data))
       (format "Missing type of index %s." fq-index-name)
       (add-error-value
-        (format "Invalid type of index %s." fq-index-name)
-        value))))
+       (format "Invalid type of index %s." fq-index-name)
+       value))))
 
 
 (defmethod ->error-message :automigrate.models/validate-fields-duplication
   [data]
   (let [model-name (get-model-name data)]
     (add-error-value
-      (format "Model %s has duplicated fields." model-name)
-      (:val data))))
+     (format "Model %s has duplicated fields." model-name)
+     (:val data))))
 
 
 (defmethod ->error-message :automigrate.models/validate-indexes-duplication
   [data]
   (let [model-name (get-model-name data)]
     (add-error-value
-      (format "Model %s has duplicated indexes." model-name)
-      (:val data))))
+     (format "Model %s has duplicated indexes." model-name)
+     (:val data))))
 
 
 (defmethod ->error-message :automigrate.models/public-model-as-map-strict-keys
@@ -432,26 +432,26 @@
 (defmethod ->error-message :automigrate.models/validate-indexes-duplication-across-models
   [data]
   (let [duplicated-indexes (->> (:origin-value data)
-                             (vals)
-                             (map (fn [model]
-                                    (when (map? model)
-                                      (map first (:indexes model)))))
-                             (remove nil?)
-                             (flatten)
-                             (duplicates))]
+                                (vals)
+                                (map (fn [model]
+                                       (when (map? model)
+                                         (map first (:indexes model)))))
+                                (remove nil?)
+                                (flatten)
+                                (duplicates))]
     (format "Models have duplicated indexes: [%s]." (str/join ", " duplicated-indexes))))
 
 
 (defmethod ->error-message :automigrate.models/validate-types-duplication-across-models
   [data]
   (let [duplicated-types (->> (:origin-value data)
-                           (vals)
-                           (map (fn [model]
-                                  (when (map? model)
-                                    (map first (:types model)))))
-                           (remove nil?)
-                           (flatten)
-                           (duplicates))]
+                              (vals)
+                              (map (fn [model]
+                                     (when (map? model)
+                                       (map first (:types model)))))
+                              (remove nil?)
+                              (flatten)
+                              (duplicates))]
     (format "Models have duplicated types: [%s]." (str/join ", " duplicated-types))))
 
 
@@ -460,9 +460,9 @@
   (let [models-internal (->> (:val data))
         all-types (set (validation-util/get-all-types models-internal))
         all-fields-no-type (validation-util/get-all-enum-fields-without-type
-                             models-internal all-types)]
+                            models-internal all-types)]
     (format "There are enum fields with missing enum types: [%s]."
-      (str/join ", " all-fields-no-type))))
+            (str/join ", " all-fields-no-type))))
 
 
 (defmethod ->error-message :automigrate.models/validate-indexed-fields
@@ -471,9 +471,9 @@
         model (:val data)
         model-fields (set (map :name (:fields model)))
         index-fields (->> (:indexes model)
-                       (map #(get-in % [:options :fields]))
-                       (flatten)
-                       (set))
+                          (map #(get-in % [:options :fields]))
+                          (flatten)
+                          (set))
         missing-fields (vec (set/difference index-fields model-fields))]
     (format "Missing indexed fields %s in model %s." missing-fields model-name)))
 
@@ -482,10 +482,10 @@
   [data]
   (condp = (problem-reason data)
     '(clojure.core/<= 1
-       (clojure.core/count %)
-       Integer/MAX_VALUE) (add-error-value
-                            "Action should contain at least one field."
-                            (:val data))
+                      (clojure.core/count %)
+                      Integer/MAX_VALUE) (add-error-value
+                                          "Action should contain at least one field."
+                                          (:val data))
 
     (add-error-value "Invalid fields definition." (:val data))))
 
@@ -507,15 +507,15 @@
       (let [fq-field-name (get-fq-field-name data)]
         (case (:reason data)
           "Extra input" (add-error-value
-                          (format "Field %s has extra value in definition." fq-field-name)
-                          (:val data))
+                         (format "Field %s has extra value in definition." fq-field-name)
+                         (:val data))
 
           (add-error-value
-            (format "Invalid field definition in model %s." model-name)
-            (:val data))))
+           (format "Invalid field definition in model %s." model-name)
+           (:val data))))
       (add-error-value
-        (format "Invalid field definition in model %s." model-name)
-        (:val data)))))
+       (format "Invalid field definition in model %s." model-name)
+       (:val data)))))
 
 
 (defmethod ->error-message :automigrate.fields/type
@@ -525,8 +525,8 @@
     (if (= "Insufficient input" (:reason data))
       (format "Missing type of field %s." fq-field-name)
       (add-error-value
-        (format "Invalid type of field %s." fq-field-name)
-        value))))
+       (format "Invalid type of field %s." fq-field-name)
+       value))))
 
 
 (defmethod ->error-message :automigrate.fields/float-type
@@ -536,17 +536,17 @@
     (condp = (problem-reason data)
       `automigrate.fields/float-precision?
       (add-error-value
-        (format "Parameter for float type of field %s should be integer between 1 and 53." fq-field-name)
-        value)
+       (format "Parameter for float type of field %s should be integer between 1 and 53." fq-field-name)
+       value)
 
       '(clojure.core/= (clojure.core/count %) 2)
       (add-error-value
-        (format "Vector form of float type of field %s should have parameter." fq-field-name)
-        value)
+       (format "Vector form of float type of field %s should have parameter." fq-field-name)
+       value)
 
       (add-error-value
-        (format "Invalid float type of field %s." fq-field-name)
-        value))))
+       (format "Invalid float type of field %s." fq-field-name)
+       value))))
 
 
 (defmethod ->error-message :automigrate.fields/keyword-type
@@ -554,8 +554,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (:val data)]
     (add-error-value
-      (format "Unknown type of field %s." fq-field-name)
-      value)))
+     (format "Unknown type of field %s." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/char-type
@@ -564,17 +564,17 @@
         value (:val data)]
     (condp = (problem-reason data)
       `pos-int? (add-error-value
-                  (format "Parameter for char type of field %s should be positive integer." fq-field-name)
-                  value)
+                 (format "Parameter for char type of field %s should be positive integer." fq-field-name)
+                 value)
 
       '(clojure.core/= (clojure.core/count %) 2)
       (add-error-value
-        (format "Vector form of char type of field %s should have parameter." fq-field-name)
-        value)
+       (format "Vector form of char type of field %s should have parameter." fq-field-name)
+       value)
 
       (add-error-value
-        (format "Invalid float type of field %s." fq-field-name)
-        value))))
+       (format "Invalid float type of field %s." fq-field-name)
+       value))))
 
 
 (defmethod ->error-message :automigrate.fields/decimal-type
@@ -582,8 +582,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (:val data)]
     (add-error-value
-      (format "Invalid definition decimal/numeric type of field %s." fq-field-name)
-      value)))
+     (format "Invalid definition decimal/numeric type of field %s." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/bit-type
@@ -591,8 +591,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (:val data)]
     (add-error-value
-      (format "Invalid definition bit type of field %s." fq-field-name)
-      value)))
+     (format "Invalid definition bit type of field %s." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/time-types
@@ -602,13 +602,13 @@
     (condp = (problem-reason data)
       `automigrate.fields/time-precision?
       (add-error-value
-        (str (format "Invalid definition of type for field %s." fq-field-name)
-          " The allowed range of precision is from 0 to 6.")
-        value)
+       (str (format "Invalid definition of type for field %s." fq-field-name)
+            " The allowed range of precision is from 0 to 6.")
+       value)
 
       (add-error-value
-        (format "Invalid definition of type for field %s." fq-field-name)
-        value))))
+       (format "Invalid definition of type for field %s." fq-field-name)
+       value))))
 
 
 (defmethod ->error-message :automigrate.fields/field-name
@@ -617,8 +617,8 @@
     (if (= "Insufficient input" (:reason data))
       (format "Missing field name in model %s." model-name)
       (add-error-value
-        (format "Invalid field name in model %s. Field name should be a keyword." model-name)
-        (:val data)))))
+       (format "Invalid field name in model %s. Field name should be a keyword." model-name)
+       (:val data)))))
 
 
 (defmethod ->error-message :automigrate.fields/options
@@ -626,8 +626,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Invalid options of field %s." fq-field-name)
-      value)))
+     (format "Invalid options of field %s." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/null
@@ -635,8 +635,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :null of field %s should be boolean." fq-field-name)
-      value)))
+     (format "Option :null of field %s should be boolean." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/primary-key
@@ -644,8 +644,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :primary-key of field %s should be `true`." fq-field-name)
-      value)))
+     (format "Option :primary-key of field %s should be `true`." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/check
@@ -653,8 +653,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :check of field %s should be a not empty vector." fq-field-name)
-      value)))
+     (format "Option :check of field %s should be a not empty vector." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/unique
@@ -662,16 +662,16 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :unique of field %s should be `true`." fq-field-name)
-      value)))
+     (format "Option :unique of field %s should be `true`." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/options-strict-keys
   [data]
   (let [fq-field-name (get-fq-field-name data)]
     (add-error-value
-      (format "Field %s has extra options." fq-field-name)
-      (:val data))))
+     (format "Field %s has extra options." fq-field-name)
+     (:val data))))
 
 
 (defmethod ->error-message :automigrate.fields/default
@@ -679,8 +679,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :default of field %s has invalid value." fq-field-name)
-      value)))
+     (format "Option :default of field %s has invalid value." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/foreign-key
@@ -688,8 +688,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :foreign-key of field %s should be qualified keyword." fq-field-name)
-      value)))
+     (format "Option :foreign-key of field %s should be qualified keyword." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/on-delete
@@ -697,8 +697,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :on-delete of field %s should be one of available FK actions." fq-field-name)
-      value)))
+     (format "Option :on-delete of field %s should be one of available FK actions." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/on-update
@@ -706,8 +706,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :on-update of field %s should be one of available FK actions." fq-field-name)
-      value)))
+     (format "Option :on-update of field %s should be one of available FK actions." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/array
@@ -715,9 +715,9 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :array of field %s should be string showing array dimension: \"[]\", \"[][]\", etc."
-        fq-field-name)
-      value)))
+     (format "Option :array of field %s should be string showing array dimension: \"[]\", \"[][]\", etc."
+             fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/comment
@@ -725,9 +725,9 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Option :comment of field %s should be string."
-        fq-field-name)
-      value)))
+     (format "Option :comment of field %s should be string."
+             fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/validate-fk-options-on-delete
@@ -735,8 +735,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Field %s has :on-delete option without :foreign-key." fq-field-name)
-      value)))
+     (format "Field %s has :on-delete option without :foreign-key." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/validate-fk-options-on-update
@@ -744,8 +744,8 @@
   (let [fq-field-name (get-fq-field-name data)
         value (get-options data)]
     (add-error-value
-      (format "Field %s has :on-update option without :foreign-key." fq-field-name)
-      value)))
+     (format "Field %s has :on-update option without :foreign-key." fq-field-name)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/validate-default-and-type
@@ -754,38 +754,38 @@
         field-type (get-in data [:val :type])
         value (-> data :val (select-keys [:default :type]))]
     (add-error-value
-      (format "Option %s of field %s does not match the field type: `%s`."
-        :default
-        fq-field-name
-        field-type)
-      value)))
+     (format "Option %s of field %s does not match the field type: `%s`."
+             :default
+             fq-field-name
+             field-type)
+     value)))
 
 
 (defmethod ->error-message :automigrate.fields/validate-default-and-null
   [data]
   (let [fq-field-name (get-fq-field-name data)]
     (add-error-value
-      (format "Option :default of field %s couldn't be `nil` because of: `:null false`."
-        fq-field-name)
-      (:val data))))
+     (format "Option :default of field %s couldn't be `nil` because of: `:null false`."
+             fq-field-name)
+     (:val data))))
 
 
 (defmethod ->error-message :automigrate.fields/validate-fk-options-and-null-on-delete
   [data]
   (let [fq-field-name (get-fq-field-name data)]
     (add-error-value
-      (format "Option :on-delete of field %s couldn't be :set-null because of: `:null false`."
-        fq-field-name)
-      (:val data))))
+     (format "Option :on-delete of field %s couldn't be :set-null because of: `:null false`."
+             fq-field-name)
+     (:val data))))
 
 
 (defmethod ->error-message :automigrate.fields/validate-fk-options-and-null-on-update
   [data]
   (let [fq-field-name (get-fq-field-name data)]
     (add-error-value
-      (format "Option :on-update of field %s couldn't be :set-null because of: `:null false`."
-        fq-field-name)
-      (:val data))))
+     (format "Option :on-update of field %s couldn't be :set-null because of: `:null false`."
+             fq-field-name)
+     (:val data))))
 
 
 ; Migrations
@@ -795,8 +795,8 @@
   (let [reason (or (:reason data) (:pred data))]
     (condp = reason
       `coll? (add-error-value
-               (format "Migration actions should be vector.")
-               (:val data))
+              (format "Migration actions should be vector.")
+              (:val data))
 
       "Migrations' schema error.")))
 
@@ -806,8 +806,8 @@
   (let [reason (or (:reason data) (:pred data))]
     (condp = reason
       "no method" (add-error-value
-                    (format "Invalid action type.")
-                    (:val data))
+                   (format "Invalid action type.")
+                   (:val data))
 
       '(clojure.core/fn [%]
          (clojure.core/contains? % :fields))
@@ -823,8 +823,8 @@
 (defmethod ->error-message :automigrate.actions/model-name
   [data]
   (add-error-value
-    (format "Action has invalid model name.")
-    (:val data)))
+   (format "Action has invalid model name.")
+   (:val data)))
 
 
 (defn get-fq-type-from-action-error
@@ -838,18 +838,18 @@
   [data]
   (let [fq-type-name (get-fq-type-from-action-error data)]
     (add-error-value
-      (format "It is not possible to remove existing choices of enum type %s."
-        fq-type-name)
-      (-> data :val :changes))))
+     (format "It is not possible to remove existing choices of enum type %s."
+             fq-type-name)
+     (-> data :val :changes))))
 
 
 (defmethod ->error-message :automigrate.actions/validate-type-choices-not-allow-to-re-order
   [data]
   (let [fq-type-name (get-fq-type-from-action-error data)]
     (add-error-value
-      (format "It is not possible to re-order existing choices of enum type %s."
-        fq-type-name)
-      (-> data :val :changes))))
+     (format "It is not possible to re-order existing choices of enum type %s."
+             fq-type-name)
+     (-> data :val :changes))))
 
 
 ; Command arguments
@@ -898,14 +898,14 @@
         origin-value (::s/value explain-data)
         reports (for [problem problems
                       :let [problem* (assoc problem
-                                       :origin-value origin-value
-                                       :main-spec main-spec)]]
+                                            :origin-value origin-value
+                                            :main-spec main-spec)]]
                   {:title (->error-title problem*)
                    :message (->error-message problem*)
                    :problem problem*})
         messages (->> reports
-                   (map #(format ERROR-TEMPLATE (:title %) (:message %)))
-                   (str/join "\n"))]
+                      (map #(format ERROR-TEMPLATE (:title %) (:message %)))
+                      (str/join "\n"))]
     {:reports reports
      :formatted messages}))
 

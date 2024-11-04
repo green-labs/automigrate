@@ -1,12 +1,12 @@
 (ns automigrate.types-enum-test
   (:require
-    [clojure.test :refer :all]
-    [bond.james :as bond]
-    [automigrate.schema :as schema]
-    [automigrate.util.db :as db-util]
-    [automigrate.util.file :as file-util]
-    [automigrate.testing-util :as test-util]
-    [automigrate.testing-config :as config]))
+   [clojure.test :refer :all]
+   [bond.james :as bond]
+   [automigrate.schema :as schema]
+   [automigrate.util.db :as db-util]
+   [automigrate.util.file :as file-util]
+   [automigrate.testing-util :as test-util]
+   [automigrate.testing-config :as config]))
 
 
 (use-fixtures :each
@@ -28,8 +28,8 @@
                 :type-name :account-role
                 :options {:type :enum
                           :choices ["admin" "customer"]}})
-            (test-util/make-migration-spy! {:existing-actions existing-actions
-                                            :existing-models existing-models}))))))
+             (test-util/make-migration-spy! {:existing-actions existing-actions
+                                             :existing-models existing-models}))))))
 
 
 (deftest test-make-migration*-create-type-enum-restore-ok
@@ -45,9 +45,9 @@
                          {:fields [[:id :serial]]
                           :types [[:account-role :enum {:choices ["admin" "customer"]}]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-and-migrate-create-type-enum-ok
@@ -67,12 +67,12 @@
                         {:create-type
                          [:account-role :as '(:enum "admin" "customer")]}]
         expected-q-sql (list ["CREATE TABLE account (id SERIAL)"]
-                         ["CREATE TYPE account_role AS ENUM('admin', 'customer')"])]
+                             ["CREATE TYPE account_role AS ENUM('admin', 'customer')"])]
 
     (is (= {:new-actions expected-actions
             :q-edn expected-q-edn
             :q-sql expected-q-sql}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions existing-actions
              :existing-models changed-models})))
@@ -84,7 +84,7 @@
               {:typname "account_role"
                :typtype "e"
                :enumlabel "customer"}]
-            (db-util/exec!
+             (db-util/exec!
               config/DATABASE-CONN
               {:select [:t.typname :t.typtype :e.enumlabel]
                :from [[:pg_type :t]]
@@ -111,24 +111,24 @@
                         {:create-type [:account-role
                                        :as
                                        '(:enum
-                                          "admin"
-                                          "customer")]}
+                                         "admin"
+                                         "customer")]}
                         {:drop-type [:account-role]}]
         expected-q-sql (list ["CREATE TABLE account (id SERIAL)"]
-                         ["CREATE TYPE account_role AS ENUM('admin', 'customer')"]
-                         ["DROP TYPE account_role"])]
+                             ["CREATE TYPE account_role AS ENUM('admin', 'customer')"]
+                             ["DROP TYPE account_role"])]
 
     (is (= {:new-actions expected-actions
             :q-edn expected-q-edn
             :q-sql expected-q-sql}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions existing-actions
              :existing-models changed-models})))
 
     (testing "check type has been dropped in db"
       (is (= []
-            (db-util/exec!
+             (db-util/exec!
               config/DATABASE-CONN
               {:select [:t.typname :t.typtype :e.enumlabel]
                :from [[:pg_type :t]]
@@ -151,9 +151,9 @@
         existing-models {:account
                          {:fields [[:id :serial]]}}]
     (is (= "There are no changes in models.\n"
-          (with-out-str
-            (test-util/make-migration! {:existing-actions existing-actions
-                                        :existing-models existing-models}))))))
+           (with-out-str
+             (test-util/make-migration! {:existing-actions existing-actions
+                                         :existing-models existing-models}))))))
 
 
 (deftest test-make-and-migrate-create-type-enum-with-creating-table-ok
@@ -174,13 +174,13 @@
                         {:create-type
                          [:account-role :as '(:enum "admin" "customer")]}]
         expected-q-sql (list
-                         ["CREATE TABLE account (id SERIAL)"]
-                         ["CREATE TYPE account_role AS ENUM('admin', 'customer')"])]
+                        ["CREATE TABLE account (id SERIAL)"]
+                        ["CREATE TYPE account_role AS ENUM('admin', 'customer')"])]
 
     (is (= {:new-actions expected-actions
             :q-edn expected-q-edn
             :q-sql expected-q-sql}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions existing-actions
              :existing-models changed-models})))
@@ -192,7 +192,7 @@
               {:typname "account_role"
                :typtype "e"
                :enumlabel "customer"}]
-            (db-util/exec!
+             (db-util/exec!
               config/DATABASE-CONN
               {:select [:t.typname :t.typtype :e.enumlabel]
                :from [[:pg_type :t]]
@@ -207,7 +207,7 @@
                :udt_name "int4"
                :is_nullable "NO"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
 
 
 (deftest test-make-and-migrate-alter-type-enum-ok
@@ -244,17 +244,17 @@
                           {:alter-type
                            [:account-role :add-value "other" :after "support"]}])
         expected-q-sql (list
-                         ["CREATE TABLE account (id SERIAL)"]
-                         ["CREATE TYPE account_role AS ENUM('admin', 'customer')"]
-                         [["ALTER TYPE account_role ADD VALUE 'basic' BEFORE 'admin'"]
-                          ["ALTER TYPE account_role ADD VALUE 'developer' BEFORE 'customer'"]
-                          ["ALTER TYPE account_role ADD VALUE 'support' AFTER 'customer'"]
-                          ["ALTER TYPE account_role ADD VALUE 'other' AFTER 'support'"]])]
+                        ["CREATE TABLE account (id SERIAL)"]
+                        ["CREATE TYPE account_role AS ENUM('admin', 'customer')"]
+                        [["ALTER TYPE account_role ADD VALUE 'basic' BEFORE 'admin'"]
+                         ["ALTER TYPE account_role ADD VALUE 'developer' BEFORE 'customer'"]
+                         ["ALTER TYPE account_role ADD VALUE 'support' AFTER 'customer'"]
+                         ["ALTER TYPE account_role ADD VALUE 'other' AFTER 'support'"]])]
 
     (is (= {:new-actions expected-actions
             :q-edn expected-q-edn
             :q-sql expected-q-sql}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions existing-actions
              :existing-models changed-models})))
@@ -284,7 +284,7 @@
                :typtype "e"
                :enumlabel "other"
                :enumsortorder 4.0}]
-            (test-util/get-enum-type-choices config/DATABASE-CONN "account_role"))))))
+             (test-util/get-enum-type-choices config/DATABASE-CONN "account_role"))))))
 
 
 ; ERRORS
@@ -298,9 +298,9 @@
                                     {:choices ["admin" "customer"]
                                      :wrong true}]]}}}]
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Options of type :account.types/account-role have extra keys.\n\n")
-          (with-out-str
-            (test-util/make-migration! params))))))
+                "Options of type :account.types/account-role have extra keys.\n\n")
+           (with-out-str
+             (test-util/make-migration! params))))))
 
 
 (deftest test-types-enum-model-validation-duplicated-type-across-models-error
@@ -310,9 +310,9 @@
                  :feed {:fields [[:id :integer {:null false}]]
                         :types [[:role :enum {:choices ["admin"]}]]}}}]
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Models have duplicated types: [:role].\n\n")
-          (with-out-str
-            (test-util/make-migration! params))))))
+                "Models have duplicated types: [:role].\n\n")
+           (with-out-str
+             (test-util/make-migration! params))))))
 
 
 (deftest test-types-enum-model-validation-choices-error
@@ -321,47 +321,47 @@
                   {:account {:fields [[:id :integer {:null false}]]
                              :types [[:role :enum {:choices []}]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Enum type :account.types/role should contain at least one choice.\n\n")
-            (with-out-str
-              (test-util/make-migration! params))))))
+                  "Enum type :account.types/role should contain at least one choice.\n\n")
+             (with-out-str
+               (test-util/make-migration! params))))))
 
   (testing "type option choices must be a vector"
     (let [params {:existing-models
                   {:account {:fields [[:id :integer {:null false}]]
                              :types [[:role :enum {:choices '("admin")}]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Choices definition of type :account.types/role should be a vector of strings.\n\n"
-               "  (\"admin\")\n\n")
-            (with-out-str
-              (test-util/make-migration! params))))))
+                  "Choices definition of type :account.types/role should be a vector of strings.\n\n"
+                  "  (\"admin\")\n\n")
+             (with-out-str
+               (test-util/make-migration! params))))))
 
   (testing "type option choices must not have duplicated values"
     (let [params {:existing-models
                   {:account {:fields [[:id :integer {:null false}]]
                              :types [[:role :enum {:choices ["admin" "admin"]}]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Enum type definition :account.types/role has duplicated choices.\n\n"
-               "  [\"admin\" \"admin\"]\n\n")
-            (with-out-str
-              (test-util/make-migration! params))))))
+                  "Enum type definition :account.types/role has duplicated choices.\n\n"
+                  "  [\"admin\" \"admin\"]\n\n")
+             (with-out-str
+               (test-util/make-migration! params))))))
 
   (testing "type option must contain choices"
     (let [params {:existing-models
                   {:account {:fields [[:id :integer {:null false}]]
                              :types [[:role :enum {}]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Enum type :account.types/role misses :choices option.\n\n")
-            (with-out-str
-              (test-util/make-migration! params))))))
+                  "Enum type :account.types/role misses :choices option.\n\n")
+             (with-out-str
+               (test-util/make-migration! params))))))
 
   (testing "type must contain options with choices"
     (let [params {:existing-models
                   {:account {:fields [[:id :integer {:null false}]]
                              :types [[:role :enum]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Enum type :account.types/role misses :choices option.\n\n")
-            (with-out-str
-              (test-util/make-migration! params)))))))
+                  "Enum type :account.types/role misses :choices option.\n\n")
+             (with-out-str
+               (test-util/make-migration! params)))))))
 
 
 (deftest test-types-enum-model-validation-type-definition-error
@@ -370,18 +370,18 @@
                   {:account {:fields [[:id :integer {:null false}]]
                              :types [[:role]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Type :account.types/role must contain one of definition [:enum].\n\n")
-            (with-out-str
-              (test-util/make-migration! params))))))
+                  "Type :account.types/role must contain one of definition [:enum].\n\n")
+             (with-out-str
+               (test-util/make-migration! params))))))
 
   (testing "empty type"
     (let [params {:existing-models
                   {:account {:fields [[:id :integer {:null false}]]
                              :types [[]]}}}]
       (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-               "Type definition in model :account must contain a name.\n\n")
-            (with-out-str
-              (test-util/make-migration! params)))))))
+                  "Type definition in model :account must contain a name.\n\n")
+             (with-out-str
+               (test-util/make-migration! params)))))))
 
 
 (deftest test-types-enum-migrations-choices-error
@@ -398,10 +398,10 @@
                   {:account {:fields [[:id :serial]]
                              :types [[:role :enum {:choices ["admin" "test"]}]]}}}]
       (is (= (str "-- MIGRATION ERROR -------------------------------------\n\n"
-               "It is not possible to remove existing choices of enum type :account/role.\n\n"
-               "  {:choices {:from [\"admin\" \"customer\"], :to [\"admin\" \"test\"]}}\n\n")
-            (with-out-str
-              (test-util/make-migration! params))))))
+                  "It is not possible to remove existing choices of enum type :account/role.\n\n"
+                  "  {:choices {:from [\"admin\" \"customer\"], :to [\"admin\" \"test\"]}}\n\n")
+             (with-out-str
+               (test-util/make-migration! params))))))
 
   (testing "do not allow to re-order existing choice values"
     (let [params {:existing-actions [{:action :create-table
@@ -416,10 +416,10 @@
                   {:account {:fields [[:id :serial]]
                              :types [[:role :enum {:choices ["customer" "admin"]}]]}}}]
       (is (= (str "-- MIGRATION ERROR -------------------------------------\n\n"
-               "It is not possible to re-order existing choices of enum type :account/role.\n\n"
-               "  {:choices {:from [\"admin\" \"customer\"], :to [\"customer\" \"admin\"]}}\n\n")
-            (with-out-str
-              (test-util/make-migration! params)))))))
+                  "It is not possible to re-order existing choices of enum type :account/role.\n\n"
+                  "  {:choices {:from [\"admin\" \"customer\"], :to [\"customer\" \"admin\"]}}\n\n")
+             (with-out-str
+               (test-util/make-migration! params)))))))
 
 
 (deftest test-types-enum-make-migration-alter-type-ok
@@ -446,9 +446,9 @@
                                        :changes {:choices {:from ["admin" "customer"]
                                                            :to ["admin" "customer" "support"]}}})}]
       (is (= (str "Created migration: test/resources/db/migrations/0001_auto_alter_type_account_role_etc.edn\n"
-               "Actions:\n"
-               "  - alter type account_role\n"
-               "  - add column role to account\n"
-               "  - alter column id in account\n")
-            (with-out-str
-              (test-util/make-migration! params)))))))
+                  "Actions:\n"
+                  "  - alter type account_role\n"
+                  "  - add column role to account\n"
+                  "  - alter column id in account\n")
+             (with-out-str
+               (test-util/make-migration! params)))))))

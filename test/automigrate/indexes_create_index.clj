@@ -12,27 +12,27 @@
 (deftest test-action-create-partial-index-edn-condition-ok
   (testing "check generated actions, queries edn and sql from all actions"
     (is (= {:new-actions (list
-                           {:action :create-table
-                            :fields {:amount {:type :integer}
-                                     :created-at {:type :timestamp}
-                                     :id {:type :serial}}
-                            :model-name :users}
-                           {:action :create-index
-                            :index-name :users-created-at-idx
-                            :options {:type :btree
-                                      :fields [:created-at]
-                                      :where [:> :amount 10]}
-                            :model-name :users})
+                          {:action :create-table
+                           :fields {:amount {:type :integer}
+                                    :created-at {:type :timestamp}
+                                    :id {:type :serial}}
+                           :model-name :users}
+                          {:action :create-index
+                           :index-name :users-created-at-idx
+                           :options {:type :btree
+                                     :fields [:created-at]
+                                     :where [:> :amount 10]}
+                           :model-name :users})
             :q-edn [{:create-table [:users]
                      :with-columns ['(:id :serial)
                                     '(:amount :integer)
                                     '(:created-at :timestamp)]}
                     {:create-index '(:users-created-at-idx :on :users
-                                      :using (:btree :created-at)
-                                      :where [:> :amount 10])}]
+                                                           :using (:btree :created-at)
+                                                           :where [:> :amount 10])}]
             :q-sql [["CREATE TABLE users (id SERIAL, amount INTEGER, created_at TIMESTAMP)"]
                     ["CREATE INDEX users_created_at_idx ON USERS USING BTREE(created_at) WHERE amount > 10"]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions []
              :existing-models
@@ -65,27 +65,27 @@
              :udt_name "timestamp"
              :is_nullable "YES"
              :table_name "users"}]
-          (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+           (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
   (testing "test indexes"
     (is (= [{:indexdef (str "CREATE INDEX users_created_at_idx ON public.users"
-                         " USING btree (created_at) WHERE (amount > 10)")
+                            " USING btree (created_at) WHERE (amount > 10)")
              :indexname "users_created_at_idx"
              :schemaname "public"
              :tablename "users"
              :tablespace nil}]
-          (test-util/get-indexes config/DATABASE-CONN "users")))))
+           (test-util/get-indexes config/DATABASE-CONN "users")))))
 
 
 (deftest test-action-alter-index-to-partial-edn-condition-ok
   (testing "check generated actions, queries edn and sql from all actions"
     (is (= {:new-actions (list
-                           {:action :alter-index
-                            :index-name :users-created-at-idx
-                            :options {:type :btree
-                                      :fields [:created-at]
-                                      :where [:> :amount 10]}
-                            :model-name :users})
+                          {:action :alter-index
+                           :index-name :users-created-at-idx
+                           :options {:type :btree
+                                     :fields [:created-at]
+                                     :where [:> :amount 10]}
+                           :model-name :users})
             :q-edn [{:create-table [:users]
                      :with-columns ['(:id :serial)
                                     '(:amount :integer)
@@ -94,13 +94,13 @@
                                     :using '(:btree :created-at)]}
                     [{:drop-index :users-created-at-idx}
                      {:create-index '(:users-created-at-idx :on :users
-                                       :using (:btree :created-at)
-                                       :where [:> :amount 10])}]]
+                                                            :using (:btree :created-at)
+                                                            :where [:> :amount 10])}]]
             :q-sql [["CREATE TABLE users (id SERIAL, amount INTEGER, created_at TIMESTAMP)"]
                     ["CREATE INDEX users_created_at_idx ON USERS USING BTREE(created_at)"]
                     [["DROP INDEX users_created_at_idx"]
                      ["CREATE INDEX users_created_at_idx ON USERS USING BTREE(created_at) WHERE amount > 10"]]]}
-          (test-util/perform-make-and-migrate!
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}
@@ -143,45 +143,45 @@
              :udt_name "timestamp"
              :is_nullable "YES"
              :table_name "users"}]
-          (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+           (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
   (testing "test indexes"
     (is (= [{:indexdef (str "CREATE INDEX users_created_at_idx ON public.users"
-                         " USING btree (created_at) WHERE (amount > 10)")
+                            " USING btree (created_at) WHERE (amount > 10)")
              :indexname "users_created_at_idx"
              :schemaname "public"
              :tablename "users"
              :tablespace nil}]
-          (test-util/get-indexes config/DATABASE-CONN "users")))))
+           (test-util/get-indexes config/DATABASE-CONN "users")))))
 
 
 (deftest test-action-alter-index-from-partial-to-partial-raw-condition-ok
   (testing "check generated actions, queries edn and sql from all actions"
     (is (= {:new-actions (list
-                           {:action :alter-index
-                            :index-name :users-created-at-idx
-                            :options {:type :btree
-                                      :fields [:created-at]
-                                      :where [:raw "amount > 0 AND id IS NOT NULL"]}
-                            :model-name :users})
+                          {:action :alter-index
+                           :index-name :users-created-at-idx
+                           :options {:type :btree
+                                     :fields [:created-at]
+                                     :where [:raw "amount > 0 AND id IS NOT NULL"]}
+                           :model-name :users})
             :q-edn [{:create-table [:users]
                      :with-columns ['(:id :serial)
                                     '(:amount :integer)
                                     '(:created-at :timestamp)]}
                     {:create-index '(:users-created-at-idx :on :users
-                                      :using (:btree :created-at)
-                                      :where [:> :amount 10])}
+                                                           :using (:btree :created-at)
+                                                           :where [:> :amount 10])}
                     [{:drop-index :users-created-at-idx}
                      {:create-index '(:users-created-at-idx :on :users
-                                       :using (:btree :created-at)
-                                       :where [:raw "amount > 0 AND id IS NOT NULL"])}]]
+                                                            :using (:btree :created-at)
+                                                            :where [:raw "amount > 0 AND id IS NOT NULL"])}]]
             :q-sql [["CREATE TABLE users (id SERIAL, amount INTEGER, created_at TIMESTAMP)"]
                     [(str "CREATE INDEX users_created_at_idx ON USERS"
-                       " USING BTREE(created_at) WHERE amount > 10")]
+                          " USING BTREE(created_at) WHERE amount > 10")]
                     [["DROP INDEX users_created_at_idx"]
                      [(str "CREATE INDEX users_created_at_idx ON USERS"
-                        " USING BTREE(created_at) WHERE amount > 0 AND id IS NOT NULL")]]]}
-          (test-util/perform-make-and-migrate!
+                           " USING BTREE(created_at) WHERE amount > 0 AND id IS NOT NULL")]]]}
+           (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
                                  :fields {:id {:type :serial}
@@ -227,24 +227,24 @@
              :udt_name "timestamp"
              :is_nullable "YES"
              :table_name "users"}]
-          (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
+           (test-util/get-table-schema-from-db config/DATABASE-CONN "users"))))
 
   (testing "test indexes"
     (is (= [{:indexdef (str "CREATE INDEX users_created_at_idx ON public.users"
-                         " USING btree (created_at) WHERE ((amount > 0) AND (id IS NOT NULL))")
+                            " USING btree (created_at) WHERE ((amount > 0) AND (id IS NOT NULL))")
              :indexname "users_created_at_idx"
              :schemaname "public"
              :tablename "users"
              :tablespace nil}]
-          (test-util/get-indexes config/DATABASE-CONN "users")))))
+           (test-util/get-indexes config/DATABASE-CONN "users")))))
 
 
 (deftest test-create-index-invalid-option-where-errors
   (testing "invalid value in :where option"
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Option :where of index :account.indexes/users-created-at-idx should a not empty vector.\n\n")
-          (with-out-str
-            (test-util/make-migration!
+                "Option :where of index :account.indexes/users-created-at-idx should a not empty vector.\n\n")
+           (with-out-str
+             (test-util/make-migration!
               {:existing-models
                {:account
                 {:fields [[:id :serial]]
@@ -253,9 +253,9 @@
 
   (testing "empty vector in :where option"
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Option :where of index :account.indexes/users-created-at-idx should a not empty vector.\n\n")
-          (with-out-str
-            (test-util/make-migration!
+                "Option :where of index :account.indexes/users-created-at-idx should a not empty vector.\n\n")
+           (with-out-str
+             (test-util/make-migration!
               {:existing-models
                {:account
                 {:fields [[:id :serial]]

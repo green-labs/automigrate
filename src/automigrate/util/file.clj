@@ -48,7 +48,7 @@
    (safe-println more ";"))
   ([more delimiter]
    (.write *out*
-     (str (str/join (str delimiter "\n") more) "\n"))))
+           (str (str/join (str delimiter "\n") more) "\n"))))
 
 
 ; TODO: reduce duplication with safe-println!
@@ -57,7 +57,7 @@
    (safe-println-sql more ";"))
   ([more delimiter]
    (.write *out*
-     (str (str/join (str delimiter "\n\n") more) "\n"))))
+           (str (str/join (str delimiter "\n\n") more) "\n"))))
 
 
 (defn prn-err

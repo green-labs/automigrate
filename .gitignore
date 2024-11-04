@@ -15,6 +15,7 @@ lsp/
 .vscode
 *.iml
 .idea/
+.calva/
 
 # for local testing
 src/automigrate/models.edn

@@ -31,18 +31,6 @@ repl:
 	@clj -A:test:dev
 
 
-.PHONY: fmt-check  # Checking code formatting
-fmt-check:
-	@$(INFO) "Checking code formatting..."
-	@cljstyle check --report $(DIRS)
-
-
-.PHONY: fmt  # Fixing code formatting
-fmt:
-	@$(INFO) "Fixing code formatting..."
-	@cljstyle fix --report $(DIRS)
-
-
 .PHONY: lint  # Linting code
 lint:
 	@$(INFO) "Linting project..."

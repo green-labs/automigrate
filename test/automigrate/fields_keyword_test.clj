@@ -21,7 +21,7 @@
               :q-edn [{:create-table [:account]
                        :with-columns ['(:id :bigserial)]}]
               :q-sql [["CREATE TABLE account (id BIGSERIAL)"]]}
-            (test-util/perform-make-and-migrate!
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions []
                :existing-models models}))))
@@ -34,7 +34,7 @@
                :udt_name "int8"
                :is_nullable "NO"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
 
 
 (deftest test-fields-bigserial-add-column-with-unique-true-ok
@@ -57,7 +57,7 @@
                        :alter-table :account}]
               :q-sql [["CREATE TABLE account (id SERIAL)"]
                       ["ALTER TABLE account ADD COLUMN number BIGSERIAL CONSTRAINT account_number_key UNIQUE"]]}
-            (test-util/perform-make-and-migrate!
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions existing-actions
                :existing-models models}))))
@@ -77,7 +77,7 @@
                :udt_name "int8"
                :is_nullable "NO"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
 
 
 (deftest test-fields-smallserial-create-table-ok
@@ -91,7 +91,7 @@
               :q-edn [{:create-table [:account]
                        :with-columns ['(:id :smallserial)]}]
               :q-sql [["CREATE TABLE account (id SMALLSERIAL)"]]}
-            (test-util/perform-make-and-migrate!
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions []
                :existing-models models}))))
@@ -104,7 +104,7 @@
                :udt_name "int2"
                :is_nullable "NO"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
 
 
 (deftest ^:eftest/slow test-fields-kw-create-table-ok
@@ -139,9 +139,9 @@
               :q-edn [{:create-table [:account]
                        :with-columns [(list :thing field-type)]}]
               :q-sql [[(format "CREATE TABLE account (thing %s)"
-                         (str/upper-case
-                           (or field-name (name field-type))))]]}
-            (test-util/perform-make-and-migrate!
+                               (str/upper-case
+                                (or field-name (name field-type))))]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions []
                :existing-models {:account
@@ -155,7 +155,7 @@
                :udt_name (or udt (name field-type))
                :is_nullable "YES"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
 
 
 (deftest ^:eftest/slow test-fields-kw-alter-column-ok
@@ -194,11 +194,11 @@
               :q-edn [{:create-table [:account]
                        :with-columns [(list :thing field-type)]}
                       {:alter-table '(:account
-                                       {:alter-column [:thing :set [:not nil]]})}]
+                                      {:alter-column [:thing :set [:not nil]]})}]
               :q-sql [[(format "CREATE TABLE account (thing %s)"
-                         (str/upper-case (or field-name (name field-type))))]
+                               (str/upper-case (or field-name (name field-type))))]
                       ["ALTER TABLE account ALTER COLUMN thing SET NOT NULL"]]}
-            (test-util/perform-make-and-migrate!
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:thing {:type field-type}}
@@ -214,4 +214,4 @@
                :udt_name (or udt (name field-type))
                :is_nullable "NO"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))

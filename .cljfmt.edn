@@ -1,0 +1,3 @@
+{:remove-consecutive-blank-lines? false
+ :align-associative? false
+ :sort-ns-references? true}

@@ -31,8 +31,8 @@
                                :unique true}
                           :name {:type [:varchar 255]}}}}]
     (is (thrown-with-msg? ExceptionInfo
-          #"Foreign key :feed/account has reference on the missing model :missing-model."
-          (#'models/validate-foreign-key models)))))
+                          #"Foreign key :feed/account has reference on the missing model :missing-model."
+                          (#'models/validate-foreign-key models)))))
 
 
 (deftest test-validate-foreign-key-check-referenced-field-not-exist-err
@@ -45,8 +45,8 @@
                 :account
                 {:fields {:name {:type [:varchar 255]}}}}]
     (is (thrown-with-msg? ExceptionInfo
-          #"Foreign key :feed/account has reference on the missing field :account/missing-field."
-          (#'models/validate-foreign-key models)))))
+                          #"Foreign key :feed/account has reference on the missing field :account/missing-field."
+                          (#'models/validate-foreign-key models)))))
 
 
 (deftest test-validate-foreign-key-check-referenced-field-is-not-unique-err
@@ -59,8 +59,8 @@
                 :account
                 {:fields {:id {:type :serial}}}}]
     (is (thrown-with-msg? ExceptionInfo
-          #"Foreign key :feed/account there is no unique or primary key constraint on the referenced field :account/id."
-          (#'models/validate-foreign-key models)))))
+                          #"Foreign key :feed/account there is no unique or primary key constraint on the referenced field :account/id."
+                          (#'models/validate-foreign-key models)))))
 
 
 (deftest test-validate-foreign-key-check-same-type-of-fields-ok
@@ -87,8 +87,8 @@
                 {:fields {:id {:type :uuid
                                :unique true}}}}]
     (is (thrown-with-msg? ExceptionInfo
-          #"Foreign key field :feed/account and referenced field :account/id have different types."
-          (#'models/validate-foreign-key models)))))
+                          #"Foreign key field :feed/account and referenced field :account/id have different types."
+                          (#'models/validate-foreign-key models)))))
 
 
 (deftest test-validate-indexes-missing-indexed-fields-err

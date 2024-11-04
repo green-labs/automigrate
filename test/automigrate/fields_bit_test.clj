@@ -24,8 +24,8 @@
               :q-edn [{:create-table [:account]
                        :with-columns [(list :thing [field-type 3])]}]
               :q-sql [[(format "CREATE TABLE account (thing %s(3))"
-                         (str/upper-case (name field-type)))]]}
-            (test-util/perform-make-and-migrate!
+                               (str/upper-case (name field-type)))]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions []
                :existing-models {:account
@@ -39,7 +39,7 @@
                :udt_name (name field-type)
                :is_nullable "YES"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
 
 
 (deftest test-fields-bit-alter-column-ok
@@ -62,16 +62,16 @@
                       {:add-column (list :thing [field-type 3])
                        :alter-table :account}
                       {:alter-table (list :account
-                                      {:alter-column
-                                       (list :thing :type [field-type 10]
-                                         :using [:raw "thing"] [:raw "::"] [field-type 10])})}]
+                                          {:alter-column
+                                           (list :thing :type [field-type 10]
+                                                 :using [:raw "thing"] [:raw "::"] [field-type 10])})}]
               :q-sql [["CREATE TABLE account (id SERIAL)"]
                       [(format "ALTER TABLE account ADD COLUMN thing %s(3)"
-                         type-name-up)]
+                               type-name-up)]
                       [(format (str "ALTER TABLE account ALTER COLUMN thing TYPE %s(10)"
-                                 " USING thing :: %s(10)")
-                         type-name-up type-name-up)]]}
-            (test-util/perform-make-and-migrate!
+                                    " USING thing :: %s(10)")
+                               type-name-up type-name-up)]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}}
@@ -99,7 +99,7 @@
                :udt_name (name field-type)
                :is_nullable "YES"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
 
 
 (deftest ^:eftest/slow test-fields-bit-add-column-ok
@@ -120,8 +120,8 @@
                        :alter-table :account}]
               :q-sql [["CREATE TABLE account (id SERIAL)"]
                       [(format "ALTER TABLE account ADD COLUMN thing %s(3)"
-                         (str/upper-case (name field-type)))]]}
-            (test-util/perform-make-and-migrate!
+                               (str/upper-case (name field-type)))]]}
+             (test-util/perform-make-and-migrate!
               {:jdbc-url config/DATABASE-CONN
                :existing-actions [{:action :create-table
                                    :fields {:id {:type :serial}}
@@ -145,7 +145,7 @@
                :udt_name (name field-type)
                :is_nullable "YES"
                :table_name "account"}]
-            (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
+             (test-util/get-table-schema-from-db config/DATABASE-CONN "account"))))))
 
 
 (deftest test-fields-bit-uses-existing-bit-type
@@ -153,7 +153,7 @@
                 {:account
                  {:fields [[:thing [:bit]]]}}}]
     (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-             "Invalid definition bit type of field :account/thing.\n\n"
-             "  [:bit]\n\n")
-          (with-out-str
-            (test-util/make-migration! params))))))
+                "Invalid definition bit type of field :account/thing.\n\n"
+                "  [:bit]\n\n")
+           (with-out-str
+             (test-util/make-migration! params))))))

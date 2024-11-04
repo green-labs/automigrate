@@ -1,0 +1,31 @@
+name: Lint
+
+on:
+  pull_request:
+    paths:
+      - "**.clj"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli: 1.12.0.1479
+          cljfmt: 0.13.0
+          clj-kondo: 2024.09.27
+
+      - name: Run cljfmt
+        run: cljfmt fix .
+
+      - name: Run clj-kondo
+        run: |
+          clj-kondo --lint . --config '{:output {:pattern "::{{level}} file={{filename}},line={{row}},col={{col}}::{{message}}" :exclude-files [".clj-kondo"]}}'

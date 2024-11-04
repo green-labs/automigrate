@@ -19,7 +19,7 @@
   [kw]
   (when (qualified-keyword? kw)
     (mapv keyword
-      ((juxt namespace name) kw))))
+          ((juxt namespace name) kw))))
 
 
 (defn kw->map
@@ -38,26 +38,26 @@
 (defn- kw->kebab-case
   [kw]
   (-> kw
-    (name)
-    (str/replace #"_" "-")
-    (keyword)))
+      (name)
+      (str/replace #"_" "-")
+      (keyword)))
 
 
 (defn map-kw-keys->kebab-case
   [map-kw]
   (reduce-kv
-    (fn [m k v]
-      (assoc m (kw->kebab-case k) v))
-    {}
-    map-kw))
+   (fn [m k v]
+     (assoc m (kw->kebab-case k) v))
+   {}
+   map-kw))
 
 
 (defn kw->snake-case
   [kw]
   (-> kw
-    (name)
-    (str/replace #"-" "_")
-    (keyword)))
+      (name)
+      (str/replace #"-" "_")
+      (keyword)))
 
 
 (defn kw->snake-case-str
@@ -87,9 +87,9 @@
   ([changes option-key]
    {:pre [(spec-util/assert! ::option-key option-key)]}
    (->> changes
-     (filter #(= EMPTY-OPTION (get (val %) option-key)))
-     (map key)
-     (set))))
+        (filter #(= EMPTY-OPTION (get (val %) option-key)))
+        (map key)
+        (set))))
 
 
 (defn check-option-state
@@ -100,39 +100,39 @@
 (defn option-states
   [field-spec]
   (s/and
-    (d/dict*
-      ^:opt {OPTION-KEY-BACKWARD (s/and (s/or :empty #{EMPTY-OPTION}
-                                          :value field-spec)
-                                   (s/conformer peek))
-             OPTION-KEY-FORWARD (s/and (s/or :empty #{EMPTY-OPTION}
-                                         :value field-spec)
-                                  (s/conformer peek))})
-    check-option-state))
+   (d/dict*
+    ^:opt {OPTION-KEY-BACKWARD (s/and (s/or :empty #{EMPTY-OPTION}
+                                            :value field-spec)
+                                      (s/conformer peek))
+           OPTION-KEY-FORWARD (s/and (s/or :empty #{EMPTY-OPTION}
+                                           :value field-spec)
+                                     (s/conformer peek))})
+   check-option-state))
 
 
 (defn generate-changes
   [option-specs]
   {:pre [(spec-util/assert! (s/coll-of qualified-keyword?) option-specs)]}
   (reduce #(assoc %1
-             (kw->name %2)
-             (option-states %2))
-    {}
-    option-specs))
+                  (kw->name %2)
+                  (option-states %2))
+          {}
+          option-specs))
 
 
 (defn generate-type-option
   [type-spec]
   {:type (s/and
-           (d/dict*
-             ^:opt {OPTION-KEY-BACKWARD type-spec
-                    OPTION-KEY-FORWARD type-spec})
-           check-option-state)})
+          (d/dict*
+           ^:opt {OPTION-KEY-BACKWARD type-spec
+                  OPTION-KEY-FORWARD type-spec})
+          check-option-state)})
 
 
 (defn has-duplicates?
   "Check duplicated items in collection."
   [items]
   (->> items
-    (frequencies)
-    (vals)
-    (every? #(= 1 %))))
+       (frequencies)
+       (vals)
+       (every? #(= 1 %))))
