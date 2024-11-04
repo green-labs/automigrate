@@ -1,16 +1,16 @@
 (ns automigrate.sql
   "Module for transforming actions from migration to SQL queries."
   (:require
+   [automigrate.actions :as actions]
+   [automigrate.constraints :as constraints]
+   [automigrate.fields :as fields]
+   [automigrate.util.db :as db-util]
+   [automigrate.util.model :as model-util]
+   [automigrate.util.spec :as spec-util]
    [clojure.spec.alpha :as s]
    [clojure.string :as str]
    [slingshot.slingshot :refer [throw+]]
-   [spec-dict :as d]
-   [automigrate.actions :as actions]
-   [automigrate.fields :as fields]
-   [automigrate.constraints :as constraints]
-   [automigrate.util.db :as db-util]
-   [automigrate.util.model :as model-util]
-   [automigrate.util.spec :as spec-util]))
+   [spec-dict :as d]))
 
 
 (def ^:private DEFAULT-INDEX :btree)
