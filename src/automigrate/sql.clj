@@ -176,7 +176,7 @@
   (let [type-sql (cond
                    (and (some? fields/*custom-types*)
                         (contains? fields/*custom-types* type-value))
-                   [:raw (name (model-util/kw->snake-case type-value))]
+                   [:raw (model-util/kw->snake-case-str type-value)]
 
                    ; :add-column clause in honeysql converts type name in kebab case into
                    ; two separated words. So, for custom enum types we have to convert
@@ -539,7 +539,7 @@
                           :create-unique-index
                           :create-index)]
        {index-action (cond-> [(:index-name value)
-                              :on (:model-name value)
+                              :on [:raw (model-util/kw->snake-case-str (:model-name value))]
                               :using (cons index-type (:fields options))]
                        (seq (:where options)) (concat [:where (:where options)]))}))))
 
