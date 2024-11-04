@@ -388,6 +388,7 @@ Common args for all commands:
 | `:migrations-dir`   | Path to store migrations dir, relative to the `resources` dir.            | `false`   | string path (example: `"path/to/migrations"`)                                                    | `"db/migrations"`                                           |
 | `:resources-dir`    | Path to resources dir to create migrations dir when it doesn't exist yet. | `false`   | string path (example: `"path/to/resources"`)                                                     | `"resources"`                                               |
 | `:migrations-table` | Model name for storing applied migrations.                                | `false`   | string (example: `"migrations"`)                                                                 | `"automigrate_migrations"`                                  |
+| `:custom-types`     | Set of custom field types to be used in models.                          | `false`   | `nil`                                                       |
 
 ### `make`
 
@@ -800,3 +801,29 @@ make release :patch  # bump git tag version by semver rules and push to remote r
 Copyright © 2021 Andrey Bogoyavlenskiy
 
 Distributed under the MIT License.
+
+### Custom field types
+
+You can use custom field types in your models by providing a set of custom types to the commands:
+
+```clojure
+;; Using with make command
+(make {:custom-types #{:dml-type}})
+
+;; Using with migrate command
+(migrate {:custom-types #{:dml-type}})
+
+;; Using with explain command
+(explain {:number 7 
+          :custom-types #{:dml-type}})
+
+;; Using in models.edn
+{:users-change-history 
+  {:fields [[:changed-dml :dml-type {:null false}]]}}
+```
+
+Note: The custom type must be already defined in your database before using it in migrations. For example:
+
+```sql
+CREATE TYPE dml_type AS ENUM ('INSERT', 'UPDATE', 'DELETE');
+```

@@ -25,6 +25,7 @@
            "          Set `:empty-sql` - for creating an empty raw SQL migration. (optional)\n"
            "  :models-file - Path to the file with model definitions relative to the `resources` dir. Default: `db/models.edn`. (optional)\n"
            "  :migrations-dir - Path to directory containing migration files relative to the `resources` dir. Default: `db/migrations`. (optional)\n"
-           "  :resources-dir - Path to resources dir to create migrations dir, if it doesn't exist. Default: `resources` (optional)\n\n")
+           "  :resources-dir - Path to resources dir to create migrations dir, if it doesn't exist. Default: `resources` (optional)\n"
+           "  :custom-types - Set of custom field types to be used in models. Example: #{:dml-type}. (optional)\n\n")
         (with-out-str
           (help/show-help! {:cmd 'make})))))

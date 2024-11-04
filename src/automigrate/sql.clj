@@ -174,6 +174,10 @@
   [{array-value :array
     type-value :type}]
   (let [type-sql (cond
+                   (and (some? fields/*custom-types*)
+                        (contains? fields/*custom-types* type-value))
+                   [:raw (name (model-util/kw->snake-case type-value))]
+
                    ; :add-column clause in honeysql converts type name in kebab case into
                    ; two separated words. So, for custom enum types we have to convert
                    ; custom type name to snake case to use it in SQL as a single word.

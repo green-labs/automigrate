@@ -118,6 +118,9 @@
       :datemultirange}))
 
 
+(def ^:dynamic *custom-types* nil)
+
+
 (defn- field-type-dispatch
   [value]
   (cond
@@ -128,9 +131,15 @@
 (defmulti field-type field-type-dispatch)
 
 
+(s/def ::custom-type keyword?)
+
+
 (defmethod field-type :keyword
-  [_]
-  ::keyword-type)
+  [value]
+  (if (and (some? *custom-types*) 
+           (contains? *custom-types* value))
+    ::custom-type
+    ::keyword-type))
 
 
 (defmethod field-type :char
