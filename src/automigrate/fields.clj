@@ -1,8 +1,8 @@
 (ns automigrate.fields
   "All possible field types with spec validation."
-  (:require [clojure.spec.alpha :as s]
-            [clojure.string :as str]
-            [automigrate.util.spec :as spec-util])
+  (:require [automigrate.util.spec :as spec-util]
+            [clojure.spec.alpha :as s]
+            [clojure.string :as str])
   (:import (clojure.lang PersistentVector)))
 
 
@@ -19,7 +19,7 @@
     :no-action})
 
 
-(s/def ::char-type (s/tuple #{:char :varchar} pos-int?))
+(s/def ::char-type (s/tuple #{:char :varchar :bpchar} pos-int?))
 
 
 (defn float-precision?
@@ -73,6 +73,7 @@
      :text
      :char
      :varchar
+     :bpchar
      :timestamp
      :timestamptz
      :date
@@ -151,6 +152,10 @@
   [_]
   ::char-type)
 
+(defmethod field-type :bpchar
+  [_]
+  ::char-type)
+
 
 (defmethod field-type :float
   [_]
@@ -220,6 +225,7 @@
       (derive :text :string)
       (derive :varchar :string)
       (derive :char :string)
+      (derive :bpchar :string)
       (derive :numeric :decimal)
       (derive :money :decimal)
       (derive :date :timestamp)

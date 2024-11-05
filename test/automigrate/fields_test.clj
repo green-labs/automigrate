@@ -1,10 +1,10 @@
 (ns automigrate.fields-test
   (:require
+   [automigrate.fields :as fields]
    [automigrate.testing-config :as config]
    [automigrate.testing-util :as test-util]
-   [clojure.test :refer :all]
    [clojure.spec.alpha :as s]
-   [automigrate.fields :as fields]))
+   [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -71,6 +71,10 @@
   (testing "check default is int and type varchar err"
     (is (false?
          (s/valid? ::fields/validate-default-and-type {:type [:varchar 20]
+                                                       :default 10}))))
+  (testing "check default is int and type bpchar err"
+    (is (false?
+         (s/valid? ::fields/validate-default-and-type {:type [:bpchar 20]
                                                        :default 10}))))
   (testing "check default is int and type timestamp ok"
     (is (true?
