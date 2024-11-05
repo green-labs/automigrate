@@ -1,16 +1,16 @@
 (ns automigrate.testing-util
   "Utils for simplifying tests."
-  (:require [clojure.java.io :as io]
-            [clojure.spec.alpha :as s]
-            [clojure.test :refer :all]
-            [eftest.runner :as runner]
-            [bond.james :as bond]
-            [slingshot.slingshot :refer [try+]]
-            [automigrate.migrations :as migrations]
+  (:require [automigrate.migrations :as migrations]
             [automigrate.schema :as schema]
             [automigrate.testing-config :as config]
             [automigrate.util.db :as db-util]
-            [automigrate.util.file :as file-util]))
+            [automigrate.util.file :as file-util]
+            [bond.james :as bond]
+            [clojure.java.io :as io]
+            [clojure.spec.alpha :as s]
+            [clojure.test :refer :all]
+            [eftest.runner :as runner]
+            [slingshot.slingshot :refer [try+]]))
 
 
 (def MIGRATIONS-TABLE :automigrate-migrations)
@@ -19,8 +19,10 @@
 (defn run-eftest
   "Run all  test using Eftest runner."
   [params]
-  (runner/run-tests (runner/find-tests "test") params))
-
+  (let [results (runner/run-tests (runner/find-tests "test") params)]
+    (when (or (pos-int? (:fail results))
+              (pos-int? (:error results)))
+      (System/exit 1))))
 
 (defn drop-all-tables
   "Drop all database tables for public schema."
