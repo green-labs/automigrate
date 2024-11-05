@@ -1,7 +1,7 @@
 (ns automigrate.indexes
   "Spec for index definitions."
-  (:require [clojure.spec.alpha :as s]
-            [automigrate.util.spec :as spec-util]))
+  (:require [automigrate.util.spec :as spec-util]
+            [clojure.spec.alpha :as s]))
 
 
 (s/def ::type
@@ -12,7 +12,7 @@
   (s/coll-of keyword? :min-count 1 :kind vector? :distinct true))
 
 
-(s/def ::unique true?)
+(s/def ::unique #{true :nulls-not-distinct})
 (s/def ::where (s/and vector? seq))
 
 

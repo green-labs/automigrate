@@ -1,7 +1,7 @@
 (ns automigrate.migrations-errors-test
-  (:require [clojure.test :refer :all]
-            [automigrate.schema :as schema]
-            [automigrate.testing-util :as test-util]))
+  (:require [automigrate.schema :as schema]
+            [automigrate.testing-util :as test-util]
+            [clojure.test :refer :all]))
 
 
 (def ^:private migration-error-title "MIGRATION ERROR")
@@ -299,7 +299,7 @@
                  :options {:type :btree
                            :fields [:id]
                            :unique "wrong-value"}}]]
-      (is (= [{:message "Option :unique of index :feed.indexes/unique should satisfy: `true?`."
+      (is (= [{:message "Option :unique of index :feed.indexes/unique should be `true` or `:nulls-not-distinct`."
                :title migration-error-title}]
              (test-util/get-spec-error-data
               #(#'schema/actions->internal-models data)))))))

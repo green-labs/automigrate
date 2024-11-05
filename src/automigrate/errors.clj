@@ -1,9 +1,9 @@
 (ns automigrate.errors
   (:require
    [automigrate.util.validation :as validation-util]
-   [clojure.string :as str]
+   [clojure.set :as set]
    [clojure.spec.alpha :as s]
-   [clojure.set :as set]))
+   [clojure.string :as str]))
 
 
 (def ^:private ERROR-TEMPLATE
@@ -377,7 +377,7 @@
 (defmethod ->error-message :automigrate.indexes/unique
   [data]
   (let [fq-index-name (get-fq-index-name data)]
-    (format "Option :unique of index %s should satisfy: `true?`." fq-index-name)))
+    (format "Option :unique of index %s should be `true` or `:nulls-not-distinct`." fq-index-name)))
 
 
 (defmethod ->error-message :automigrate.indexes/where
