@@ -1,9 +1,9 @@
 (ns automigrate.models-errors-test
-  (:require [clojure.test :refer :all]
-            [automigrate.core :as core]
+  (:require [automigrate.core :as core]
             [automigrate.models :as models]
+            [automigrate.testing-config :as config]
             [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config]))
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -435,7 +435,7 @@
     (let [data {:foo {:fields [[:id [:char 50]]]
                       :indexes [[:foo-idx :btree {:fields [:id]
                                                   :unique nil}]]}}]
-      (is (= [{:message "Option :unique of index :foo.indexes/foo-idx should satisfy: `true?`."
+      (is (= [{:message "Option :unique of index :foo.indexes/foo-idx should be `true` or `:nulls-not-distinct`."
                :title "MODEL ERROR"}]
              (test-util/get-spec-error-data #(models/->internal-models data)))))))
 

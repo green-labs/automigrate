@@ -535,12 +535,13 @@
    (fn [value]
      (let [options (:options value)
            index-type (or (:type options) DEFAULT-INDEX)
-           index-action (if (true? (:unique options))
+           index-action (if (:unique options)
                           :create-unique-index
                           :create-index)]
        {index-action (cond-> [(:index-name value)
                               :on [:raw (model-util/kw->snake-case-str (:model-name value))]
                               :using (cons index-type (:fields options))]
+                       (= (:unique options) :nulls-not-distinct) (conj [:raw "NULLS NOT DISTINCT"])
                        (seq (:where options)) (concat [:where (:where options)]))}))))
 
 
