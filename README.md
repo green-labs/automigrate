@@ -325,7 +325,7 @@ Available options are presented in the table below:
 | Field option | Description                                                           | Required? | Value                      |
 |--------------|-----------------------------------------------------------------------|-----------|----------------------------|
 | `:fields`    | Vector of fields as keywords. Index will be created for those fields. | `true`    | [`:field-name` ...]        |
-| `:unique`    | Set to `true` if index should be unique.                              | `false`   | `true?`                    |
+| `:unique`    | Set to `true` if index should be unique. Set to `:nulls-not-distinct` if index should be unique with nulls not distinct. | `false`   | `true` or `:nulls-not-distinct` |
 | `:where`     | Set condition in Honeysql format to create partial index.             | `false`   | Example: `[:> amount 10]`  |
 
 #### Types
