@@ -1,7 +1,7 @@
 (ns automigrate.indexes-create-index
-  (:require [clojure.test :refer :all]
+  (:require [automigrate.testing-config :as config]
             [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config]))
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -27,11 +27,11 @@
                      :with-columns ['(:id :serial)
                                     '(:amount :integer)
                                     '(:created-at :timestamp)]}
-                    {:create-index '(:users-created-at-idx :on :users
+                    {:create-index '(:users-created-at-idx :on [:raw "users"]
                                                            :using (:btree :created-at)
                                                            :where [:> :amount 10])}]
             :q-sql [["CREATE TABLE users (id SERIAL, amount INTEGER, created_at TIMESTAMP)"]
-                    ["CREATE INDEX users_created_at_idx ON USERS USING BTREE(created_at) WHERE amount > 10"]]}
+                    ["CREATE INDEX users_created_at_idx ON users USING BTREE(created_at) WHERE amount > 10"]]}
            (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions []
@@ -90,16 +90,16 @@
                      :with-columns ['(:id :serial)
                                     '(:amount :integer)
                                     '(:created-at :timestamp)]}
-                    {:create-index [:users-created-at-idx :on :users
+                    {:create-index [:users-created-at-idx :on [:raw "users"]
                                     :using '(:btree :created-at)]}
                     [{:drop-index :users-created-at-idx}
-                     {:create-index '(:users-created-at-idx :on :users
+                     {:create-index '(:users-created-at-idx :on [:raw "users"]
                                                             :using (:btree :created-at)
                                                             :where [:> :amount 10])}]]
             :q-sql [["CREATE TABLE users (id SERIAL, amount INTEGER, created_at TIMESTAMP)"]
-                    ["CREATE INDEX users_created_at_idx ON USERS USING BTREE(created_at)"]
+                    ["CREATE INDEX users_created_at_idx ON users USING BTREE(created_at)"]
                     [["DROP INDEX users_created_at_idx"]
-                     ["CREATE INDEX users_created_at_idx ON USERS USING BTREE(created_at) WHERE amount > 10"]]]}
+                     ["CREATE INDEX users_created_at_idx ON users USING BTREE(created_at) WHERE amount > 10"]]]}
            (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN
              :existing-actions [{:action :create-table
@@ -168,18 +168,18 @@
                      :with-columns ['(:id :serial)
                                     '(:amount :integer)
                                     '(:created-at :timestamp)]}
-                    {:create-index '(:users-created-at-idx :on :users
+                    {:create-index '(:users-created-at-idx :on [:raw "users"]
                                                            :using (:btree :created-at)
                                                            :where [:> :amount 10])}
                     [{:drop-index :users-created-at-idx}
-                     {:create-index '(:users-created-at-idx :on :users
+                     {:create-index '(:users-created-at-idx :on [:raw "users"]
                                                             :using (:btree :created-at)
                                                             :where [:raw "amount > 0 AND id IS NOT NULL"])}]]
             :q-sql [["CREATE TABLE users (id SERIAL, amount INTEGER, created_at TIMESTAMP)"]
-                    [(str "CREATE INDEX users_created_at_idx ON USERS"
+                    [(str "CREATE INDEX users_created_at_idx ON users"
                           " USING BTREE(created_at) WHERE amount > 10")]
                     [["DROP INDEX users_created_at_idx"]
-                     [(str "CREATE INDEX users_created_at_idx ON USERS"
+                     [(str "CREATE INDEX users_created_at_idx ON users"
                            " USING BTREE(created_at) WHERE amount > 0 AND id IS NOT NULL")]]]}
            (test-util/perform-make-and-migrate!
             {:jdbc-url config/DATABASE-CONN

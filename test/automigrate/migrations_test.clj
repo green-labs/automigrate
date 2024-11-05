@@ -1,19 +1,19 @@
 (ns automigrate.migrations-test
-  (:require [clojure.string :as str]
-            [clojure.test :refer :all]
-            [clojure.java.io :as io]
-            [bond.james :as bond]
+  (:require [automigrate.core :as core]
             [automigrate.migrations :as migrations]
-            [automigrate.core :as core]
             [automigrate.schema :as schema]
             [automigrate.sql :as sql]
+            [automigrate.testing-config :as config]
+            [automigrate.testing-util :as test-util]
             [automigrate.util.db :as db-util]
             [automigrate.util.file :as file-util]
             [automigrate.util.spec :as spec-util]
-            [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config])
-  (:import [java.io FileNotFoundException]
-           [clojure.lang ExceptionInfo]))
+            [bond.james :as bond]
+            [clojure.java.io :as io]
+            [clojure.string :as str]
+            [clojure.test :refer :all])
+  (:import [clojure.lang ExceptionInfo]
+           [java.io FileNotFoundException]))
 
 
 (use-fixtures :each
@@ -472,10 +472,10 @@
               "ALTER TABLE\n  feed DROP CONSTRAINT feed_account_fkey;"
               (str "ALTER TABLE\n  feed\n"
                    "ADD\n  CONSTRAINT feed_account_fkey FOREIGN KEY(account) REFERENCES account(id);")
-              "CREATE INDEX feed_name_idx ON FEED USING BTREE(name);"
+              "CREATE INDEX feed_name_idx ON feed USING BTREE(name);"
               "DROP INDEX feed_name_idx;"
               "DROP INDEX feed_name_idx;"
-              "CREATE INDEX feed_name_idx ON FEED USING BTREE(name);"
+              "CREATE INDEX feed_name_idx ON feed USING BTREE(name);"
               "COMMIT;\n"]))
            (with-out-str
              (migrations/explain {:migrations-dir config/MIGRATIONS-DIR
@@ -704,11 +704,11 @@
       (is (= '({:create-table [:feed]
                 :with-columns [(:id :serial [:not nil])
                                (:name :text)]}
-               {:create-unique-index [:feed-name-id-unique-idx :on :feed :using (:btree :name)]})
+               {:create-unique-index [:feed-name-id-unique-idx :on [:raw "feed"] :using (:btree :name)]})
              queries)))
     (testing "test converting actions to sql"
       (is (= '(["CREATE TABLE feed (id SERIAL NOT NULL, name TEXT)"]
-               ["CREATE UNIQUE INDEX feed_name_id_unique_idx ON FEED USING BTREE(name)"])
+               ["CREATE UNIQUE INDEX feed_name_id_unique_idx ON feed USING BTREE(name)"])
              (map #(sql/->sql %) actions))))
     (testing "test running migrations on db"
       (is (every?
@@ -745,10 +745,10 @@
              actions)))
     (testing "test converting migration actions to sql queries formatted as edn"
       (is (= '({:create-unique-index
-                [:feed-name-id-unique-idx :on :feed :using (:btree :name)]})
+                [:feed-name-id-unique-idx :on [:raw "feed"] :using (:btree :name)]})
              queries)))
     (testing "test converting actions to sql"
-      (is (= '(["CREATE UNIQUE INDEX feed_name_id_unique_idx ON FEED USING BTREE(name)"])
+      (is (= '(["CREATE UNIQUE INDEX feed_name_id_unique_idx ON feed USING BTREE(name)"])
              (map #(sql/->sql %) actions))))
     (testing "test running migrations on db"
       (is (every?
@@ -830,11 +830,11 @@
     (testing "test converting migration actions to sql queries formatted as edn"
       (is (= '([{:drop-index :feed-name-id-idx}
                 {:create-index
-                 [:feed-name-id-idx :on :feed :using (:btree :name)]}])
+                 [:feed-name-id-idx :on [:raw "feed"] :using (:btree :name)]}])
              queries)))
     (testing "test converting actions to sql"
       (is (= '((["DROP INDEX feed_name_id_idx"]
-                ["CREATE INDEX feed_name_id_idx ON FEED USING BTREE(name)"]))
+                ["CREATE INDEX feed_name_id_idx ON feed USING BTREE(name)"]))
              (map #(sql/->sql %) actions))))
     (testing "test running migrations on db"
       (is (every?
