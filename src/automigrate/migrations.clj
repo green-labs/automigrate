@@ -2,25 +2,25 @@
   "Module for applying changes to migrations and db.
   Also contains tools for inspection of db state by migrations
   and state of migrations itself."
-  (:require [next.jdbc :as jdbc]
-            [clojure.spec.alpha :as s]
-            [clojure.java.io :as io]
-            [clojure.string :as str]
-            [clojure.set :as set]
-            [clojure.pprint :as pprint]
-            [slingshot.slingshot :refer [throw+ try+]]
-            [differ.core :as differ]
-            [weavejester.dependency :as dep]
-            [automigrate.actions :as actions]
-            [automigrate.models :as models]
-            [automigrate.fields :as fields]
+  (:require [automigrate.actions :as actions]
             [automigrate.errors :as errors]
-            [automigrate.sql :as sql]
+            [automigrate.fields :as fields]
+            [automigrate.models :as models]
             [automigrate.schema :as schema]
-            [automigrate.util.file :as file-util]
+            [automigrate.sql :as sql]
             [automigrate.util.db :as db-util]
+            [automigrate.util.file :as file-util]
+            [automigrate.util.model :as model-util]
             [automigrate.util.spec :as spec-util]
-            [automigrate.util.model :as model-util])
+            [clojure.java.io :as io]
+            [clojure.pprint :as pprint]
+            [clojure.set :as set]
+            [clojure.spec.alpha :as s]
+            [clojure.string :as str]
+            [differ.core :as differ]
+            [next.jdbc :as jdbc]
+            [slingshot.slingshot :refer [throw+ try+]]
+            [weavejester.dependency :as dep])
   (:import [java.io FileNotFoundException]))
 
 
@@ -721,14 +721,14 @@
        (print-action-names next-migration))
      (println "There are no changes in models."))
    (catch [:type ::s/invalid] e
-     (file-util/prn-err e))
+     (file-util/prn-err-and-exit e))
    (catch #(contains? #{::models/missing-referenced-model
                         ::models/missing-referenced-field
                         ::models/referenced-field-is-not-unique
                         ::models/fk-fields-have-different-types} (:type %)) e
      (-> e
          (errors/custom-error->error-report)
-         (file-util/prn-err)))
+         (file-util/prn-err-and-exit)))
    (catch [:reason ::dep/circular-dependency] e
      (-> {:title "MIGRATION ERROR"
           :message (format (str "Circular dependency between two migration actions: \n  %s\nand\n  %s\n\n"
@@ -736,19 +736,19 @@
                            (pr-str (:dependency e))
                            (pr-str (:node e)))}
          (errors/custom-error->error-report)
-         (file-util/prn-err)))
+         (file-util/prn-err-and-exit)))
    (catch FileNotFoundException e
      (-> {:title "ERROR"
           :message (format "Missing file:\n\n  %s" (ex-message e))}
          (errors/custom-error->error-report)
-         (file-util/prn-err)))
+         (file-util/prn-err-and-exit)))
    (catch IllegalArgumentException e
      (-> {:title "ERROR"
           :message (str (format "%s\n\nMissing resource file error. " (ex-message e))
                         "Please, check, if models.edn exists and resources dir\n"
                         "is included to source paths in `deps.edn` or `project.clj`.")}
          (errors/custom-error->error-report)
-         (file-util/prn-err)))))
+         (file-util/prn-err-and-exit)))))
 
 
 (defmethod make-migration EMPTY-SQL-MIGRATION-TYPE
@@ -772,12 +772,12 @@
      (spit migration-file-name-full-path SQL-MIGRATION-TEMPLATE)
      (println (str "Created migration: " migration-file-name-full-path)))
    (catch [:type ::s/invalid] e
-     (file-util/prn-err e))
+     (file-util/prn-err-and-exit e))
    (catch #(contains? #{::missing-migration-name
                         ::duplicated-migration-numbers} (:type %)) e
      (-> e
          (errors/custom-error->error-report)
-         (file-util/prn-err)))))
+         (file-util/prn-err-and-exit)))))
 
 
 (defn- get-migration-by-number
@@ -869,12 +869,12 @@
                   :migration-type (get-migration-type file-name)
                   :explain-format explain-format})))
    (catch [:type ::s/invalid] e
-     (file-util/prn-err e))
+     (file-util/prn-err-and-exit e))
    (catch #(contains? #{::no-migration-by-number
                         ::duplicated-migration-numbers} (:type %)) e
      (-> e
          (errors/custom-error->error-report)
-         (file-util/prn-err)))))
+         (file-util/prn-err-and-exit)))))
 
 
 (defn- already-migrated
@@ -1002,12 +1002,12 @@
              (delete-migration! db migration-name migrations-table))))
        (println "Nothing to migrate.")))
    (catch [:type ::s/invalid] e
-     (file-util/prn-err e))
+     (file-util/prn-err-and-exit e))
    (catch #(contains? #{::duplicated-migration-numbers
                         ::invalid-target-migration-number} (:type %)) e
      (-> e
          (errors/custom-error->error-report)
-         (file-util/prn-err)))))
+         (file-util/prn-err-and-exit)))))
 
 
 (defn- get-already-migrated-migrations
@@ -1040,10 +1040,10 @@
            (println (format "[%s] %s" sign file-name))))
        (println "Migrations not found.")))
    (catch [:type ::s/invalid] e
-     (file-util/prn-err e))
+     (file-util/prn-err-and-exit e))
    (catch #(contains? #{::duplicated-migration-numbers
                         ::no-migrations-table
                         ::unexpected-db-error} (:type %)) e
      (-> e
          (errors/custom-error->error-report)
-         (file-util/prn-err)))))
+         (file-util/prn-err-and-exit)))))

@@ -1,16 +1,16 @@
 (ns automigrate.core
   "Public interface for lib's users."
   (:gen-class)
-  (:require [clojure.spec.alpha :as s]
+  (:require [automigrate.errors :as errors]
+            [automigrate.fields :as fields]
+            [automigrate.help :as automigrate-help]
+            [automigrate.migrations :as migrations]
+            [automigrate.util.file :as file-util]
+            [automigrate.util.spec :as spec-util]
+            [clojure.spec.alpha :as s]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [slingshot.slingshot :refer [try+]]
-            [automigrate.migrations :as migrations]
-            [automigrate.util.spec :as spec-util]
-            [automigrate.util.file :as file-util]
-            [automigrate.errors :as errors]
-            [automigrate.help :as automigrate-help]
-            [automigrate.fields :as fields])
+            [slingshot.slingshot :refer [try+ throw+]])
   (:refer-clojure :exclude [list]))
 
 
@@ -106,13 +106,13 @@
    (let [args* (spec-util/conform args-spec (or args {}))]
      (f args*))
    (catch [:type ::s/invalid] e
-     (file-util/prn-err e))
+     (file-util/prn-err-and-exit e))
    (catch Object e
      (let [message (or (ex-message e) (str e))]
        (-> {:title "UNEXPECTED ERROR"
             :message message}
            (errors/custom-error->error-report)
-           (file-util/prn-err))))))
+           (file-util/prn-err-and-exit))))))
 
 
 ; Public interface

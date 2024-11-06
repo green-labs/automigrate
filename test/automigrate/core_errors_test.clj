@@ -1,13 +1,13 @@
 (ns automigrate.core-errors-test
-  (:require [clojure.test :refer :all]
-            [clojure.spec.alpha :as s]
-            [bond.james :as bond]
-            [automigrate.core :as core]
+  (:require [automigrate.core :as core]
+            [automigrate.errors :as errors]
             [automigrate.migrations :as migrations]
             [automigrate.testing-config :as config]
-            [automigrate.util.file :as file-util]
             [automigrate.testing-util :as test-util]
-            [automigrate.errors :as errors]))
+            [automigrate.util.file :as file-util]
+            [bond.james :as bond]
+            [clojure.spec.alpha :as s]
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -29,11 +29,11 @@
              (-> (bond/calls #'migrations/make-next-migration) first :args first :migrations-dir)))))
 
   (testing "check wrong type of migration"
-    (bond/with-stub! [[file-util/prn-err (constantly nil)]]
+    (bond/with-stub! [[file-util/prn-err-and-exit (constantly nil)]]
       (core/make {:models-file (str config/MODELS-DIR "feed_basic.edn")
                   :migrations-dir config/MIGRATIONS-DIR
                   :type "txt"})
-      (let [error (-> (bond/calls file-util/prn-err) first :args first)]
+      (let [error (-> (bond/calls file-util/prn-err-and-exit) first :args first)]
         (is (= [{:message "Invalid migration type.\n\n  :txt"
                  :title "COMMAND ERROR"}]
                (test-util/get-spec-error-data (constantly error)))))))

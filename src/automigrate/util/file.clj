@@ -60,7 +60,7 @@
            (str (str/join (str delimiter "\n\n") more) "\n"))))
 
 
-(defn prn-err
+(defn prn-err-and-exit
   [e]
   (print (str (:message e) "\n"))
   (.flush *out*)
