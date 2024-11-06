@@ -10,7 +10,7 @@
             [clojure.spec.alpha :as s]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [slingshot.slingshot :refer [try+ throw+]])
+            [slingshot.slingshot :refer [try+]])
   (:refer-clojure :exclude [list]))
 
 
