@@ -1,8 +1,7 @@
 (ns automigrate.core
   "Public interface for lib's users."
   (:gen-class)
-  (:require [automigrate.errors :as errors]
-            [automigrate.fields :as fields]
+  (:require [automigrate.fields :as fields]
             [automigrate.help :as automigrate-help]
             [automigrate.migrations :as migrations]
             [automigrate.util.file :as file-util]
@@ -10,7 +9,7 @@
             [clojure.spec.alpha :as s]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [slingshot.slingshot :refer [try+ throw+]]
+            [slingshot.slingshot :refer [try+]]
             [slingshot.support :refer [rethrow]])
   (:refer-clojure :exclude [list]))
 
