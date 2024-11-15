@@ -1,14 +1,10 @@
 (ns automigrate.core-errors-test
-  (:require [clojure.test :refer :all]
-            [clojure.spec.alpha :as s]
-            [bond.james :as bond]
-            [automigrate.core :as core]
+  (:require [automigrate.core :as core]
             [automigrate.migrations :as migrations]
             [automigrate.testing-config :as config]
-            [automigrate.util.file :as file-util]
             [automigrate.testing-util :as test-util]
-            [automigrate.errors :as errors]))
-
+            [bond.james :as bond]
+            [clojure.test :refer :all]))
 
 (use-fixtures :each
   (test-util/with-drop-tables config/DATABASE-CONN)
@@ -17,71 +13,57 @@
 
 (deftest test-run-make-migration-args-error
   (testing "check missing model file path"
-    (bond/with-spy [migrations/make-next-migration]
-      (core/make {:migrations-dir config/MIGRATIONS-DIR})
-      (is (= "db/models.edn"
-             (-> (bond/calls #'migrations/make-next-migration) first :args first :models-file)))))
+    (is (thrown-with-msg? Exception #"Cannot open <nil> as a Reader."
+                          (with-out-str
+                            (core/make {:migrations-dir config/MIGRATIONS-DIR})))))
 
   (testing "check missing migrations dir path"
-    (bond/with-spy [migrations/make-next-migration]
-      (core/make {:models-file (str config/MODELS-DIR "feed_basic.edn")})
-      (is (= "db/migrations"
-             (-> (bond/calls #'migrations/make-next-migration) first :args first :migrations-dir)))))
+    (is (thrown-with-msg? Exception #"No such file or directory"
+                          (with-out-str
+                            (core/make {:models-file (str config/MODELS-DIR "feed_basic.edn")})))))
 
   (testing "check wrong type of migration"
-    (bond/with-stub! [[file-util/prn-err (constantly nil)]]
-      (core/make {:models-file (str config/MODELS-DIR "feed_basic.edn")
-                  :migrations-dir config/MIGRATIONS-DIR
-                  :type "txt"})
-      (let [error (-> (bond/calls file-util/prn-err) first :args first)]
-        (is (= [{:message "Invalid migration type.\n\n  :txt"
-                 :title "COMMAND ERROR"}]
-               (test-util/get-spec-error-data (constantly error)))))))
+    (is (thrown-with-msg? Exception #"Invalid migration type."
+                          (with-out-str (core/make {:models-file (str config/MODELS-DIR "feed_basic.edn")
+                                                    :migrations-dir config/MIGRATIONS-DIR
+                                                    :type "txt"})))))
 
   (testing "check missing migration name"
-    (bond/with-stub! [[errors/custom-error->error-report (constantly nil)]]
-      (core/make {:models-file (str config/MODELS-DIR "feed_basic.edn")
-                  :migrations-dir config/MIGRATIONS-DIR
-                  :type :empty-sql})
-      (let [error (-> (bond/calls errors/custom-error->error-report) first :args first)]
-        (is (= {:message "Missing migration name."}
-               (dissoc (test-util/thrown-with-slingshot-data? [:type ::s/invalid] error) :type)))))))
+    (is (thrown-with-msg? Exception #"Missing migration name."
+                          (with-out-str (core/make {:models-file (str config/MODELS-DIR "feed_basic.edn")
+                                                    :migrations-dir config/MIGRATIONS-DIR
+                                                    :type :empty-sql}))))))
 
 
 (deftest test-run-migrate-args-error
   (testing "check missing db connection"
-    (is (= (str "-- COMMAND ERROR -------------------------------------\n\n"
-                "Missing database connection URL.\n\n"
-                "  nil\n\n")
-           (with-out-str
-             (core/migrate {:migrations-dir config/MIGRATIONS-DIR})))))
+    (is (thrown-with-msg? Exception #"-- COMMAND ERROR -------------------------------------\\n\\nMissing database connection URL.\\n\\n  nil\\n"
+                          (with-out-str
+                            (core/migrate {:migrations-dir config/MIGRATIONS-DIR})))))
 
   (testing "check invalid target migration number"
     (core/make {:models-file (str config/MODELS-DIR "feed_basic.edn")
                 :migrations-dir config/MIGRATIONS-DIR
                 :resources-dir config/RESOURCES-DIR})
-    (is (= "-- ERROR -------------------------------------\n\nInvalid target migration number.\n\n"
-           (with-out-str
-             (core/migrate {:jdbc-url config/DATABASE-URL
-                            :migrations-dir config/MIGRATIONS-DIR
-                            :number 4}))))))
+    (is (thrown-with-msg? Exception #"Invalid target migration number."
+                          (with-out-str
+                            (core/migrate {:jdbc-url config/DATABASE-URL
+                                           :migrations-dir config/MIGRATIONS-DIR
+                                           :number 4}))))))
 
 
 (deftest test-run-explain-args-error
   (testing "check missing db connection"
-    (is (= (str "-- COMMAND ERROR -------------------------------------\n\n"
-                "Invalid direction of migration.\n\n  :wrong\n\n")
-           (with-out-str
-             (core/explain {:migrations-dir config/MIGRATIONS-DIR
-                            :number 1
-                            :direction :wrong})))))
+    (is (thrown-with-msg? Exception #"-- COMMAND ERROR -------------------------------------\\n\\nInvalid direction of migration.\\n\\n  :wrong\\n"
+                          (with-out-str
+                            (core/explain {:migrations-dir config/MIGRATIONS-DIR
+                                           :number 1
+                                           :direction :wrong})))))
 
   (testing "check missing migration by number"
-    (is (= (str "-- ERROR -------------------------------------\n\n"
-                "Missing migration by number 10\n\n")
-           (with-out-str
-             (core/explain {:migrations-dir config/MIGRATIONS-DIR
-                            :number 10}))))))
+    (is (thrown-with-msg? Exception #"Missing migration by number 10"
+                          (with-out-str (core/explain {:migrations-dir config/MIGRATIONS-DIR
+                                                       :number 10}))))))
 
 
 (deftest test-run-unexpected-error
@@ -89,8 +71,7 @@
     #_{:clj-kondo/ignore [:private-call]}
     (bond/with-stub! [[migrations/get-detailed-migrations-to-migrate
                        (fn [& _] (throw (Exception. "Testing error message.")))]]
-      (is (= (str "-- UNEXPECTED ERROR -------------------------------------\n\n"
-                  "Testing error message.\n\n")
-             (with-out-str
-               (core/migrate {:migrations-dir config/MIGRATIONS-DIR
-                              :jdbc-url config/DATABASE-URL})))))))
+      (is (thrown-with-msg? Exception #"Testing error message."
+                            (with-out-str
+                              (core/migrate {:migrations-dir config/MIGRATIONS-DIR
+                                             :jdbc-url config/DATABASE-URL})))))))

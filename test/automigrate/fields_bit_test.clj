@@ -1,8 +1,8 @@
 (ns automigrate.fields-bit-test
-  (:require [clojure.string :as str]
-            [clojure.test :refer :all]
+  (:require [automigrate.testing-config :as config]
             [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config]))
+            [clojure.string :as str]
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -152,8 +152,6 @@
   (let [params {:existing-models
                 {:account
                  {:fields [[:thing [:bit]]]}}}]
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Invalid definition bit type of field :account/thing.\n\n"
-                "  [:bit]\n\n")
-           (with-out-str
-             (test-util/make-migration! params))))))
+    (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition bit type of field :account/thing.\\n\\n  \[:bit\]\\n"
+                          (with-out-str
+                            (test-util/make-migration! params))))))

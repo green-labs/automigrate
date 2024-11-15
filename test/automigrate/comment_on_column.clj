@@ -1,7 +1,7 @@
 (ns automigrate.comment-on-column
-  (:require [clojure.test :refer :all]
+  (:require [automigrate.testing-config :as config]
             [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config]))
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -390,28 +390,19 @@
 
 (deftest test-commment-on-column-errors
   (testing "comment can't be integer"
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Option :comment of field :account/thing should be string.\n\n"
-                "  {:comment 1}\n\n")
-           (with-out-str
-             (test-util/make-migration!
-              {:existing-models
-               {:account {:fields [[:thing :interval {:comment 1}]]}}})))))
+    (is (thrown-with-msg? Exception  #"-- MODEL ERROR -------------------------------------\\n\\nOption :comment of field :account/thing should be string.\\n\\n  \{:comment 1\}\\n"
+                          (with-out-str (test-util/make-migration!
+                                         {:existing-models
+                                          {:account {:fields [[:thing :interval {:comment 1}]]}}})))))
 
   (testing "comment can't be nil"
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Option :comment of field :account/thing should be string.\n\n"
-                "  {:comment nil}\n\n")
-           (with-out-str
-             (test-util/make-migration!
-              {:existing-models
-               {:account {:fields [[:thing :interval {:comment nil}]]}}})))))
+    (is (thrown-with-msg? Exception  #"-- MODEL ERROR -------------------------------------\\n\\nOption :comment of field :account/thing should be string.\\n\\n  \{:comment nil\}\\n"
+                          (with-out-str (test-util/make-migration!
+                                         {:existing-models
+                                          {:account {:fields [[:thing :interval {:comment nil}]]}}})))))
 
   (testing "comment can't be an empty string"
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Option :comment of field :account/thing should be string.\n\n"
-                "  {:comment \"\"}\n\n")
-           (with-out-str
-             (test-util/make-migration!
-              {:existing-models
-               {:account {:fields [[:thing :interval {:comment ""}]]}}}))))))
+    (is (thrown-with-msg? Exception  #"-- MODEL ERROR -------------------------------------\\n\\nOption :comment of field :account/thing should be string.\\n\\n  \{:comment \\\"\\\"\}\\n"
+                          (with-out-str (test-util/make-migration!
+                                         {:existing-models
+                                          {:account {:fields [[:thing :interval {:comment ""}]]}}}))))))

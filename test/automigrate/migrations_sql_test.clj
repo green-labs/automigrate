@@ -1,10 +1,10 @@
 (ns automigrate.migrations-sql-test
-  (:require [clojure.test :refer :all]
-            [automigrate.core :as core]
+  (:require [automigrate.core :as core]
+            [automigrate.testing-config :as config]
+            [automigrate.testing-util :as test-util]
             [automigrate.util.db :as db-util]
             [automigrate.util.file :as file-util]
-            [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config]))
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each

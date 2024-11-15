@@ -622,15 +622,11 @@
 
 
 (deftest test-run-multiple-model-errors-error
-  (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-              "Parameter for char type of field :feed/name should be positive integer.\n\n  "
-              "\"wrong-value\""
-              "\n\n-- MODEL ERROR -------------------------------------\n\n"
-              "Field :account/address has extra options.\n\n  {:primary-field 10}\n\n")
-         (with-out-str
-           (core/make {:migrations-dir config/MIGRATIONS-DIR
-                       :models-file (str config/MODELS-DIR "feed_errors.edn")
-                       :title "COMMAND ERROR"})))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nParameter for char type of field :feed/name should be positive integer.\\n\\n  \\\"wrong-value\\\"\\n\\n-- MODEL ERROR -------------------------------------\\n\\nField :account/address has extra options.\\n\\n  \{:primary-field 10\}\\n"
+                        (with-out-str
+                          (core/make {:migrations-dir config/MIGRATIONS-DIR
+                                      :models-file (str config/MODELS-DIR "feed_errors.edn")
+                                      :title "COMMAND ERROR"})))))
 
 
 (deftest test-spec-field-vec-invalid-decimal-field-type-error

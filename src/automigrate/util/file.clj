@@ -4,9 +4,9 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [resauce.core :as resauce])
-  (:import [java.nio.file Paths]
-           [com.github.vertical_blank.sqlformatter SqlFormatter]
-           [com.github.vertical_blank.sqlformatter.languages Dialect]))
+  (:import [com.github.vertical_blank.sqlformatter SqlFormatter]
+           [com.github.vertical_blank.sqlformatter.languages Dialect]
+           [java.nio.file Paths]))
 
 
 (def DEFAULT-ZERO-COUNT 4)
