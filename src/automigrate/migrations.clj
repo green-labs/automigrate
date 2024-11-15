@@ -1024,8 +1024,7 @@
    (set (already-migrated db migrations-table))
    (catch [:type ::no-migrations-table]
       ; There is no migrated migrations if table doesn't exist.
-          []
-     (rethrow))))
+          [])))
 
 
 (defn list-migrations

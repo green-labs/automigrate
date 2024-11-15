@@ -241,23 +241,21 @@
 
 (deftest test-create-index-invalid-option-where-errors
   (testing "invalid value in :where option"
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Option :where of index :account.indexes/users-created-at-idx should a not empty vector.\n\n")
-           (with-out-str
-             (test-util/make-migration!
-              {:existing-models
-               {:account
-                {:fields [[:id :serial]]
-                 :indexes [[:users-created-at-idx :btree {:fields [:created-at]
-                                                          :where "INVALID"}]]}}})))))
+    (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nOption :where of index :account.indexes/users-created-at-idx should a not empty vector.\\n"
+                          (with-out-str
+                            (test-util/make-migration!
+                             {:existing-models
+                              {:account
+                               {:fields [[:id :serial]]
+                                :indexes [[:users-created-at-idx :btree {:fields [:created-at]
+                                                                         :where "INVALID"}]]}}})))))
 
   (testing "empty vector in :where option"
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Option :where of index :account.indexes/users-created-at-idx should a not empty vector.\n\n")
-           (with-out-str
-             (test-util/make-migration!
-              {:existing-models
-               {:account
-                {:fields [[:id :serial]]
-                 :indexes [[:users-created-at-idx :btree {:fields [:created-at]
-                                                          :where []}]]}}}))))))
+    (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nOption :where of index :account.indexes/users-created-at-idx should a not empty vector.\\n"
+                          (with-out-str
+                            (test-util/make-migration!
+                             {:existing-models
+                              {:account
+                               {:fields [[:id :serial]]
+                                :indexes [[:users-created-at-idx :btree {:fields [:created-at]
+                                                                         :where []}]]}}}))))))

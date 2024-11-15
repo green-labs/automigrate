@@ -1,8 +1,8 @@
 (ns automigrate.fields-time-test
-  (:require [clojure.string :as str]
-            [clojure.test :refer :all]
+  (:require [automigrate.testing-config :as config]
             [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config]))
+            [clojure.string :as str]
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -493,95 +493,78 @@
 
 
 (deftest test-fields-time-error
-  (doseq [{:keys [field-type expected-output]}
-          [{:field-type [:interval]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing.\n\n"
-                                  "  [:interval]\n\n")}
-           {:field-type [:interval 10]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing."
-                                  " The allowed range of precision is from 0 to 6.\n\n"
-                                  "  10\n\n")}
-
-           {:field-type [:time]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing.\n\n"
-                                  "  [:time]\n\n")}
-           {:field-type [:time 10]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing."
-                                  " The allowed range of precision is from 0 to 6.\n\n"
-                                  "  10\n\n")}
-
-           {:field-type [:timetz]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing.\n\n"
-                                  "  [:timetz]\n\n")}
-           {:field-type [:timetz 10]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing."
-                                  " The allowed range of precision is from 0 to 6.\n\n"
-                                  "  10\n\n")}
-
-           {:field-type [:timestamp]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing.\n\n"
-                                  "  [:timestamp]\n\n")}
-           {:field-type [:timestamp 10]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing."
-                                  " The allowed range of precision is from 0 to 6.\n\n"
-                                  "  10\n\n")}
-
-           {:field-type [:timestamptz]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing.\n\n"
-                                  "  [:timestamptz]\n\n")}
-           {:field-type [:timestamptz 10]
-            :expected-output (str "-- MODEL ERROR -------------------------------------\n\n"
-                                  "Invalid definition of type for field :account/thing."
-                                  " The allowed range of precision is from 0 to 6.\n\n"
-                                  "  10\n\n")}]]
-
-    (let [params {:existing-models
-                  {:account
-                   {:fields [[:thing field-type]]}}}]
-      (is (= expected-output
-             (with-out-str
-               (test-util/make-migration! params)))))))
-
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing.\\n\\n  \[:interval\]\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:interval]]]}}}))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing. The allowed range of precision is from 0 to 6.\\n\\n  10\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:interval 10]]]}}}))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing.\\n\\n  \[:time\]\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:time]]]}}}))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing. The allowed range of precision is from 0 to 6.\\n\\n  10\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:time 10]]]}}}))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing.\\n\\n  \[:timetz\]\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:timetz]]]}}}))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing. The allowed range of precision is from 0 to 6.\\n\\n  10\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:timetz 10]]]}}}))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing.\\n\\n  \[:timestamp\]\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:timestamp]]]}}}))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing. The allowed range of precision is from 0 to 6.\\n\\n  10\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:timestamp 10]]]}}}))))
+  (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing.\\n\\n  \[:timestamptz\]\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:timestamptz]]]}}}))))
+  (is (thrown-with-msg? Exception  #"-- MODEL ERROR -------------------------------------\\n\\nInvalid definition of type for field :account/thing. The allowed range of precision is from 0 to 6.\\n\\n  10\\n"
+                        (with-out-str
+                          (test-util/make-migration! {:existing-models
+                                                      {:account
+                                                       {:fields [[:thing [:timestamptz 10]]]}}})))))
 
 (deftest test-fields-interval-type-with-wrong-array-option-value-error
   (testing "not balanced brackets as :array value"
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Option :array of field :account/thing should be string"
-                " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
-                "  {:array \"[][\"}\n\n")
-           (with-out-str
-             (test-util/make-migration!
-              {:existing-models
-               {:account
-                {:fields [[:thing :interval {:array "[]["}]]}}})))))
+    (is (thrown-with-msg? Exception  #"-- MODEL ERROR -------------------------------------\\n\\nOption :array of field :account/thing should be string showing array dimension: \\\"\[\]\\\", \\\"\[\]\[\]\\\", etc.\\n\\n  \{:array \\\"\[\]\[\\\"\}\\n"
+                          (with-out-str
+                            (test-util/make-migration!
+                             {:existing-models
+                              {:account
+                               {:fields [[:thing :interval {:array "[]["}]]}}})))))
 
   (testing "integer instead of string"
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Option :array of field :account/thing should be string"
-                " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
-                "  {:array 2}\n\n")
-           (with-out-str
-             (test-util/make-migration!
-              {:existing-models
-               {:account
-                {:fields [[:thing :interval {:array 2}]]}}})))))
+    (is (thrown-with-msg? Exception  #"-- MODEL ERROR -------------------------------------\\n\\nOption :array of field :account/thing should be string showing array dimension: \\\"\[\]\\\", \\\"\[\]\[\]\\\", etc.\\n\\n  \{:array 2\}\\n"
+                          (with-out-str
+                            (test-util/make-migration!
+                             {:existing-models
+                              {:account
+                               {:fields [[:thing :interval {:array 2}]]}}})))))
 
   (testing "array size can't be 0"
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "Option :array of field :account/thing should be string"
-                " showing array dimension: \"[]\", \"[][]\", etc.\n\n"
-                "  {:array \"[0]\"}\n\n")
-           (with-out-str
-             (test-util/make-migration!
-              {:existing-models
-               {:account
-                {:fields [[:thing :interval {:array "[0]"}]]}}}))))))
+    (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nOption :array of field :account/thing should be string showing array dimension: \\\"\[\]\\\", \\\"\[\]\[\]\\\", etc.\\n\\n  \{:array \\\"\[0\]\\\"}\\n"
+                          (with-out-str
+                            (test-util/make-migration!
+                             {:existing-models
+                              {:account
+                               {:fields [[:thing :interval {:array "[0]"}]]}}}))))))

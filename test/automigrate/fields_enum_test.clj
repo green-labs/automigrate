@@ -1,8 +1,8 @@
 (ns automigrate.fields-enum-test
-  (:require [clojure.test :refer :all]
-            [automigrate.util.db :as db-util]
+  (:require [automigrate.testing-config :as config]
             [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config]))
+            [automigrate.util.db :as db-util]
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -483,7 +483,6 @@
                  :feed {:fields [[:id :serial]
                                  [:status [:enum :feed-status]]]
                         :types [[:account-role :enum {:choices ["admin" "customer"]}]]}}}]
-    (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                "There are enum fields with missing enum types: [:feed/status].\n\n")
-           (with-out-str
-             (test-util/make-migration! params))))))
+    (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nThere are enum fields with missing enum types: \[:feed/status\].\\n"
+                          (with-out-str
+                            (test-util/make-migration! params))))))

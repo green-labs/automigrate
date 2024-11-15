@@ -1,7 +1,7 @@
 (ns automigrate.constraints-test
-  (:require [clojure.test :refer :all]
+  (:require [automigrate.testing-config :as config]
             [automigrate.testing-util :as test-util]
-            [automigrate.testing-config :as config]))
+            [clojure.test :refer :all]))
 
 
 (use-fixtures :each
@@ -632,28 +632,22 @@
     (let [params {:existing-models
                   {:account
                    {:fields [[:thing :integer {:check nil}]]}}}]
-      (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                  "Option :check of field :account/thing should be a not empty vector.\n\n"
-                  "  {:check nil}\n\n")
-             (with-out-str
-               (test-util/make-migration! params))))))
+      (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nOption :check of field :account/thing should be a not empty vector.\\n\\n  \{:check nil\}\\n"
+                            (with-out-str
+                              (test-util/make-migration! params))))))
 
   (testing "check can't be string"
     (let [params {:existing-models
                   {:account
                    {:fields [[:thing :integer {:check "WRONG"}]]}}}]
-      (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                  "Option :check of field :account/thing should be a not empty vector.\n\n"
-                  "  {:check \"WRONG\"}\n\n")
-             (with-out-str
-               (test-util/make-migration! params))))))
+      (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nOption :check of field :account/thing should be a not empty vector.\\n\\n  \{:check \\\"WRONG\\\"\}\\n"
+                            (with-out-str
+                              (test-util/make-migration! params))))))
 
   (testing "check can't be an empty vector"
     (let [params {:existing-models
                   {:account
                    {:fields [[:thing :integer {:check []}]]}}}]
-      (is (= (str "-- MODEL ERROR -------------------------------------\n\n"
-                  "Option :check of field :account/thing should be a not empty vector.\n\n"
-                  "  {:check []}\n\n")
-             (with-out-str
-               (test-util/make-migration! params)))))))
+      (is (thrown-with-msg? Exception #"-- MODEL ERROR -------------------------------------\\n\\nOption :check of field :account/thing should be a not empty vector.\\n\\n  \{:check \[\]\}\\n"
+                            (with-out-str
+                              (test-util/make-migration! params)))))))
